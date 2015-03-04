@@ -8,6 +8,11 @@ https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.qu
 
 and storing in GemFire, partitioned by Key. [Stream 1]
 
+
+stream create stream1 --definition "trigger --fixedDelay=10 | http-client --url='''https://query.yahooapis.com/v1/public/yql?q=select * from yahoo.finance.quote where symbol in (\"MSFT\")&format=json&env=store://datatables.org/alltableswithkeys''' --httpMethod=GET | splitter --expression=#jsonPath(payload,'$.query.results.quote') | gemfire-json-server --regionName=Stocks --keyExpression=payload.getField('symbol')" --deploy
+
+
+
 Next, from time to time a R script will calculate some TA indicators using queries and functions in GemFire, accessed from R through the Gem rest API. Results can be stored in Gem too.  [Stream 2]
 
 From a desktop, CQ and/or client subscriptions will be showing alerts at the web app.

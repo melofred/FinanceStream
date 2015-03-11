@@ -24,3 +24,4 @@ Looking at the data itself:
 gfsh> query --query="select * from /Stocks"
 --
 
+Start another stream which will read from the first,

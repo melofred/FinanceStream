@@ -13,3 +13,8 @@ stream create stream1 --definition "trigger --fixedDelay=10 | http-client --url=
 stream create stream1 --definition "trigger --fixedDelay=10 | http-client --url='''https://query.yahooapis.com/v1/public/yql?q=select * from yahoo.finance.quote where symbol in (\"MSFT\")&format=json&env=store://datatables.org/alltableswithkeys''' --httpMethod=GET | splitter --expression=#jsonPath(payload,'$.query.results') | log" --deploy
 
 stream create stream1 --definition "trigger --fixedDelay=10 | http-client --url='''https://query.yahooapis.com/v1/public/yql?q=select * from yahoo.finance.quote where symbol in (\"MSFT\")&format=json&env=store://datatables.org/alltableswithkeys''' --httpMethod=GET | splitter --expression=#jsonPath(payload,'$.query.results.quote') | gemfire-json-server --regionName=Stocks --keyExpression=payload.getField('symbol')" --deploy
+
+
+stream create stream2 --definition "http|R --slave -f test.R <in >out
+
+stream create --name IoT-Gemfire --definition "tap:stream:IoT-HTTP.shell > typeconversiontransformer | gemfire-server --regionName=car-position --keyExpression=payload.vin" --deploy

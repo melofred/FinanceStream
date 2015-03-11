@@ -1,0 +1,27 @@
+Follow steps at http://gemfire.docs.pivotal.io/latest/userguide/index.html#getting_started/15_minute_quickstart_gfsh.html
+
+Create a /Stocks region on GFSH:
+--
+gfsh> create region --name=Stocks --type=PARTITION
+--
+
+
+With a Locator running at 10334, create a stream and sink into it
+
+--
+stream create stream1 --definition "trigger --fixedDelay=3 | http-client --url='''https://query.yahooapis.com/v1/public/yql?q=select * from yahoo.finance.quote where symbol in (\"MSFT\")&format=json&env=store://datatables.org/alltableswithkeys''' --httpMethod=GET | splitter --expression=#jsonPath(payload,'$.query.results.quote') | transform --script='file:/Users/fmelo/FinanceStream/transform.groovy'| gemfire-json-server --useLocator=true --host=localhost --port=10334 --regionName=Stocks --keyExpression=payload.getField('timestamp')" --deploy
+--
+
+Using GFSH, check the entries being ingested into GFSH
+
+--
+gfsh> query --query="select count(*) from /Stocks"
+--
+
+Looking at the data itself:
+
+--
+gfsh> query --query="select * from /Stocks"
+--
+
+Start another stream which will read from the first,

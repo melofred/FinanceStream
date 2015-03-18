@@ -17,29 +17,28 @@ while(TRUE) {
 
   #trainset <- readFile #Load from GemFire using REST Query
   # http://localhost:8080/gemfire-api/v1/Stocks/ 
-  historical <- getURL(paste0('http://localhost:8080/gemfire-api/v1/Results'))
+  historical <- getURL(paste0('http://localhost:8080/gemfire-api/v1/Stocks?limit=1000'))
   historicalJSon <- fromJSON(historical)
 
+  historicalSet=historicalJSon$Stocks
 
-  trainset=historicalJSon$Results
+  trainset <- subset(historicalSet, select = c("Change", "LastTradePriceOnly", "DaysHigh", "DaysLowyy")) 
 
+  mynet <-neuralnet(Change ~ LastTradePriceOnly + DaysHigh + DaysLow, trainset, hidden = 4, lifesign = "full", linear.output = FALSE, threshold = 0.1)
 
-  mynet <-neuralnet(Z~X+Y, trainset, hidden = 2, lifesign = "full")
 
   write(names(jsonStr),stdout())
   write(line,stdout())
 
+  temp_test <- subset(trainset, select = c("LastTradePriceOnly", "DaysHigh", "DaysLowyy"))
 
-  temp_test <- subset(trainset, select = c("X", "Y"))
-
-  
   mynet.results <- compute(mynet, temp_test) #temp_test should be an input without response.Change
-  
+    
   write(mynet.results$net.result,stdout())
 
-  
   write('Done',stdout())
- 
+
+
   write('\r\n',stdout())
   #write(jsonStr,stderr())
   # process line

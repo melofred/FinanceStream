@@ -13,7 +13,7 @@ open(f)
 while(TRUE) {
   line <- readLines(f,n=1)
   write(line, stdout())
-  newRow <- fromJSON(line)
+  streamRow <- fromJSON(line)
   
 
   #trainset <- readFile #Load from GemFire using REST Query
@@ -23,45 +23,47 @@ while(TRUE) {
 
   historicalSet=historicalJSon$Stocks
 
-  dataset <- subset(historicalSet, select = c("High", "Low", "Close")) 
+  dataset <- subset(historicalSet, select = c("DaysHigh", "DaysLow", "LastTradePriceOnly")) 
+  names(dataset) <- c("High","Low","Close")
 
   #Add new row to the end of historical dataset for computing technical indicators.
   temprow <- matrix(c(rep.int(NA,length(dataset))),nrow=1,ncol=length(dataset))
   newrow <- data.frame(temprow)
   colnames(newrow) <- colnames(dataset)
   dataset <- rbind(dataset,newrow)
-  dataset[nrow(dataset),] <- c(newRow$High, newRow$Low, newRow$Close)
+  dataset[nrow(dataset),] <- c(streamRow$DaysHigh, streamRow$DaysLow, streamRow$LastTradePriceOnly)
   
 
   # Computing and adding the change column
   originalSet <- dataset
-  dataset <- originalSet[-1,]
-  dataset$Change <- diff(originalSet$Close)
+  dataset <- originalSet[-1:-50,]
+  dataset$Change <- diff(originalSet$Close, lag=50) # aplica leg no calculo de change
 
+  #dataset <- dataset[-1:-3,]
 
   # Apply Lag on the input variables
-  lag_dataset <- data.frame (Lag(dataset$Change,1), dataset$Close, dataset$High, dataset$Low)
+  #lag_dataset <- data.frame (Lag(dataset$Change,1), dataset$Close, dataset$High, dataset$Low)
   
   # set header
-  names(lag_dataset) <- c("Change", "Close", "High", "Low")
+  #names(lag_dataset) <- c("Change", "Close", "High", "Low")
   
   # Remove the first X lines (x=3 here)  to avoid NAs due to the lag
-  lag_dataset <- lag_dataset[-1:-3,]
+  #lag_dataset <- lag_dataset[-1:-3,]
 
   # include technical indicators
-  ema <- EMA(lag_dataset$Close, 5) # lag = n-1 (default=9)
-  ema_diff <- lag_dataset$Close - ema # lag = above
-  rsi <- RSI(lag_dataset$Close, 5) # lag = n (default=14)
-  smi <- SMI(HLC(lag_dataset))     # lag = nSlow+nSig (default=34)
-  sar <- SAR(HLC(lag_dataset))     # lag = 0
+  ema <- EMA(dataset$Close, 5) # lag = n-1 (default=9)
+  ema_diff <- dataset$Close - ema # lag = above
+  rsi <- RSI(dataset$Close, 5) # lag = n (default=14)
+  smi <- SMI(HLC(dataset))     # lag = nSlow+nSig (default=34)
+  sar <- SAR(HLC(dataset))     # lag = 0
 
-  high_diff = lag_dataset$High-lag_dataset$Close
-  low_diff = lag_dataset$Close-lag_dataset$Low
+  high_diff = dataset$High-dataset$Close
+  low_diff = dataset$Close-dataset$Low
 
   #ti = data.frame(ema, rsi)
   #names(ti) <- c("ema","rsi" ) 
   
-  inputs <- data.frame(rsi, ema_diff, lag_dataset$Close, high_diff, low_diff, lag_dataset$Change)
+  inputs <- data.frame(scale(rsi), scale(ema_diff), scale(dataset$Close), scale(high_diff), scale(low_diff), dataset$Change)
   names(inputs) <- c("rsi","ema_diff", "close", "high_diff", "low_diff", "change")
   
   #remove extra NAs due to technical indicator lags
@@ -72,12 +74,12 @@ while(TRUE) {
   to_predict <- inputs[nrow(inputs),] # we'll predict based on the last value 
   to_predict <- subset(to_predict, select = -c(change)) # change won't be input - it's what we're predicting.
 
-  mynet <-neuralnet(change ~ close + high_diff + low_diff + ema_diff + rsi, trainset, hidden = 6, lifesign = "full", linear.output = FALSE, threshold = 0.05)
+  mynet <-neuralnet(change ~ close + high_diff + low_diff + ema_diff + rsi, trainset, hidden = 9, lifesign = "full", linear.output = FALSE, threshold = 0.01)
 
 
   mynet.results <- compute(mynet, to_predict) # should be an input without response column
     
-  cat("\nForecasting for input: ",to_predict$close,"\n")
+  cat("\nForecasting for input: ",streamRow$LastTradePriceOnly,"\n")
   cat("\nForecasted ",mynet.results$net.result, " and should have been ", inputs[nrow(inputs),]$change, "\n")
 
   write('Done',stdout())

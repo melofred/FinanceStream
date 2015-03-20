@@ -18,10 +18,13 @@ while(TRUE) {
 
   #trainset <- readFile #Load from GemFire using REST Query
   # http://localhost:8080/gemfire-api/v1/Stocks/ 
-  historical <- getURL(paste0('http://localhost:8080/gemfire-api/v1/Stocks?limit=500'))
+  #historical <- getURL(paste0('http://localhost:8080/gemfire-api/v1/Stocks?limit=500'))
+
+  historical <- getURL(paste0('http://localhost:8080/gemfire-api/v1/queries/adhoc?q=SELECT%20DISTINCT%20*%20from%20/Stocks%20s%20ORDER%20BY%20s.ID%20desc'))
+
   historicalJSon <- fromJSON(historical)
 
-  historicalSet=historicalJSon$Stocks
+  historicalSet=historicalJSon
 
   dataset <- subset(historicalSet, select = c("DaysHigh", "DaysLow", "LastTradePriceOnly")) 
   names(dataset) <- c("High","Low","Close")

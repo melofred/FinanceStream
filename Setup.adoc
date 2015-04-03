@@ -1,0 +1,49 @@
+* Start a GemFire locator, deploying pulse on port 7575
+
+start locator --name=locator1 --J=-Dgemfire.http-service-port=7575
+
+* Start a GemFire server, deploying Rest interface at port 8080
+
+start server --name=server1 --J=-Dgemfire.start-dev-rest-api=true --J=-Dgemfire.http-service-port=8080
+
+* Test the server Rest endpoint
+
+http://localhost:8080/gemfire-api/v1
+
+{
+  "regions" : [ {
+    "name" : "Stocks",
+    "type" : "REPLICATE",
+    "key-constraint" : null,
+    "value-constraint" : null
+  } ]
+}
+
+* If it doesn't exist yet, create a /Stocks region
+
+create region --name=/Stocks --type=REPLICATE
+
+* Import existing data
+
+import data --file=~/FinanceStream/Stocks.gfd
+
+
+gfsh>import data --file=/Users/fmelo/FinanceStream/Stocks.gfd --region=/Stocks --member=server1
+Data imported from file : /Users/fmelo/FinanceStream/Stocks.gfd on host : frederimelosmbp to region : /Stocks
+
+gfsh>describe region --name=/Stocks
+
+Name            : Stocks
+Data Policy     : replicate
+Hosting Members : server1
+
+Non-Default Attributes Shared By Hosting Members
+
+ Type  | Name | Value
+------ | ---- | -----
+Region | size | 2601
+
+* Run simulation
+
+./stocks.sh
+

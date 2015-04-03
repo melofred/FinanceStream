@@ -60,7 +60,7 @@ while(TRUE) {
   names(inputs) <- c("rsi","ema_diff", "close", "high_diff", "low_diff", "change")
   
   #remove extra NAs due to technical indicator lags
-  inputs <- inputs[-1:-5]
+  inputs <- inputs[-1:-5,]
 
   trainset <-inputs[-nrow(inputs),] # exclude last line, will use that for prediction only
   

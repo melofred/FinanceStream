@@ -40,16 +40,8 @@ while(TRUE) {
   # Computing and adding the change column
   originalSet <- dataset
   dataset <- originalSet[-1:-50,]
-  dataset$Change <- diff(originalSet$Close, lag=50) # aplica leg no calculo de change
+  dataset$Change <- diff(originalSet$Close, lag=50) # applies lag to the change calculation (here we're trying to predict the change within 50 iterations)
 
-  #dataset <- dataset[-1:-3,]
-
-  # Apply Lag on the input variables
-  #lag_dataset <- data.frame (Lag(dataset$Change,1), dataset$Close, dataset$High, dataset$Low)
-  
-  # set header
-  #names(lag_dataset) <- c("Change", "Close", "High", "Low")
-  
   # Remove the first X lines (x=3 here)  to avoid NAs due to the lag
   #lag_dataset <- lag_dataset[-1:-3,]
 
@@ -63,14 +55,12 @@ while(TRUE) {
   high_diff = dataset$High-dataset$Close
   low_diff = dataset$Close-dataset$Low
 
-  #ti = data.frame(ema, rsi)
-  #names(ti) <- c("ema","rsi" ) 
   
   inputs <- data.frame(scale(rsi), scale(ema_diff), scale(dataset$Close), scale(high_diff), scale(low_diff), dataset$Change)
   names(inputs) <- c("rsi","ema_diff", "close", "high_diff", "low_diff", "change")
   
   #remove extra NAs due to technical indicator lags
-  inputs <- inputs[-1:-5,]
+  inputs <- inputs[-1:-5]
 
   trainset <-inputs[-nrow(inputs),] # exclude last line, will use that for prediction only
   

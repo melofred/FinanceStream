@@ -70,7 +70,7 @@ server1 | Region "/Stocks" created on "server1"
 
 Data imported from file : FinanceStream/Stocks.gfd on host : 192.168.3.5 to region : /Stocks
 
-4. Executing - describe --region=/Stocks
+5. Executing - describe --region=/Stocks
 
 Name            : Stocks
 Data Policy     : partition

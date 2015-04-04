@@ -57,12 +57,19 @@ while(TRUE) {
   low_diff = dataset$Close-dataset$Low
 
   
-  inputs <- data.frame(scale(rsi), scale(ema_diff), scale(high_diff), scale(low_diff), scale(sar))
+  inputs <- data.frame(rsi, ema_diff, high_diff, low_diff, sar)
   names(inputs) <- c("rsi","ema_diff", "high_diff", "low_diff", "sar")
 
   #remove extra NAs due to technical indicator lags
   inputs <- inputs[-1:-15,]
   dataset <- dataset[-1:-15,]
+
+  # normalize
+  inputs$rsi=normalizeData(inputs$rsi)
+  inputs$ema_diff=normalizeData(inputs$ema_diff)
+  inputs$high_diff=normalizeData(inputs$high_diff)
+  inputs$low_diff=normalizeData(inputs$low_diff)
+  inputs$sar=normalizeData(inputs$sar)
 
   #adds peaks and valleys
   inputs$peakvalley=0
@@ -77,7 +84,7 @@ while(TRUE) {
   to_predict <- subset(to_predict, select = -c(peakvalley)) # change won't be input - it's what we're predicting.
 
  
-  load(file='/Users/fmelo/FinanceStream/mynet_jordan.RData');
+  load(file='/Users/fmelo/FinanceStream/mynet_jordan.RData')
   results <- predict(jordannet, to_predict) # should be an input without response column
     
   cat("\nForecasting for input: ",streamRow$LastTradePriceOnly,"\n")

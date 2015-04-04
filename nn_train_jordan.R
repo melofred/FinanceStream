@@ -62,17 +62,17 @@ require("RSNNS")
 
 
   #trainset <-inputs[-nrow(inputs),] # exclude last line, will use that for prediction only
-  #mynet <-neuralnet(peakvalley ~ high_diff + low_diff + ema_diff + rsi + sar, trainset, hidden = 5, lifesign = "full", threshold = 0.01, stepmax=40000)
 
   trainset <- subset(inputs, select = -c(peakvalley))
 
-  jordannet <- jordan(x=trainset,y=inputs$peakvalley, maxit=40000)
+  jordannet <- jordan(x=trainset,y=inputs$peakvalley, maxit=1000)
 
   write('Saving network....',stdout());
 
   f <- file('/Users/fmelo/FinanceStream/mynet_jordan.RData')
   save(jordannet, file=f);
-  close(f)
+  flush(f)
+ # close(f)
 
   write('Done \r\n',stdout())
 

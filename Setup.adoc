@@ -87,6 +87,12 @@ xd:>stream create stream2 --definition "gemfire --regionName=Stocks --useLocator
 Created and deployed new stream 'stream2'
 ----
 
+Stream 2 could also be done through a tap:
+
+----
+xd:>stream create stream2 --definition "tap:stream:stream1.transform > object-to-json | shell --command='Rscript /Users/fmelo/FinanceStream/nn_evaluate_jordan.R' | log " --deploy
+----
+
 * At each a few minutes, it's time to train the network using the script __nn_train_jordan.R__
 
 That can be done through a stream in XD or even as a batch. For simplicity, let's use streams:

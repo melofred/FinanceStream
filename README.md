@@ -1,6 +1,6 @@
-= Finance Stream app setup
+# Finance Stream app setup
 
-== Pre-requisites:
+##  Pre-requisites:
 - GemFire 8.+ installed
 - Spring XD 1.1+ installed
 - R 3.1+ installed with the following packages
@@ -10,29 +10,31 @@
 . jsonlite
 . RSNNS +
 
-=== Installation 
+### Installation 
 
-* Install R: 
-  * Linux 
+Install **R**: 
+
+* Linux 
+    ```
+    su -c 'rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm'
+    sudo yum update
+    sudo yum install R
+    ```
+
+* Mac OSX (homebrew)
 ```
-su -c 'rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm'
-sudo yum update
-sudo yum install R
-````
-  * Mac OSX (homebrew)
-```
-brew install R
+ brew install R
 ```
 
-* The R packages can be easily installed by typing at the R command line: 
+* The **R** packages can be easily installed by typing at the R command line: 
 
 ```
 > install.packages(c("RCurl","quantmod","TTR","jsonlite","RSNNS"))
 ```
 
-=== GemFire Setup
+### GemFire Setup
 
-Execute the setup.gfsh script as follows:
+Execute the `setup.gfsh` script as follows:
 
 ```
 gfsh run --file=setup.gfsh
@@ -79,7 +81,7 @@ Non-Default Attributes Shared By Hosting Members
 Region | size | 2601
 ```
 
-* Test the server Rest endpoint
+* Test the server REST endpoint
 
 In a web browser, access http://localhost:8080/gemfire-api/v1
 
@@ -93,8 +95,9 @@ In a web browser, access http://localhost:8080/gemfire-api/v1
   } ]
 }
 
+## Spring XD
 
-== Create streams in Spring XD
+### Create streams in Spring XD
 
 ```
 xd:>stream create stream1 --definition "trigger --fixedDelay=10 | http-client --url='''https://query.yahooapis.com/v1/public/yql?q=select * from yahoo.finance.quote where symbol in (\"MSFT\")&format=json&env=store://datatables.org/alltableswithkeys''' --httpMethod=GET | splitter --expression=#jsonPath(payload,'$.query.results.quote') | transform --script='file:/Users/fmelo/FinanceStream/transform.groovy'| gemfire-json-server --useLocator=true --host=localhost --port=10334 --regionName=Stocks --keyExpression=payload.getField('timestamp')" --deploy
@@ -117,3 +120,7 @@ That can be done through a stream in XD or even as a batch. For simplicity, let'
 ```
 xd:>stream create trainstream --definition "trigger --fixedDelay=300 | shell --command='Rscript /Users/fmelo/FinanceStream/nn_train_jordan.R' | log " --deploy
 ```
+
+## UI using D3
+
+Open ui/index.html and check the graphs being updated...

@@ -98,5 +98,5 @@ xd:>stream create stream2 --definition "tap:stream:stream1.transform > object-to
 That can be done through a stream in XD or even as a batch. For simplicity, let's use streams:
 
 ----
-xd:>stream create trainstream --definition "trigger --fixedDelay=180 | shell --command='Rscript /Users/fmelo/FinanceStream/nn_train_jordan.R' | log " --deploy
+xd:>stream create trainstream --definition "trigger --fixedDelay=300 | shell --command='Rscript /Users/fmelo/FinanceStream/nn_train_jordan.R' | log " --deploy
 ----

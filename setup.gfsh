@@ -1,0 +1,10 @@
+# GemFire setup
+start locator --name=locator1 --J=-Dgemfire.http-service-port=7575
+
+start server --name=server1 --J=-Dgemfire.start-dev-rest-api=true --J=-Dgemfire.http-service-port=8080
+
+create region --name=/Stocks --type=PARTITION
+
+import data --file=../Stocks.gfd --region=/Stocks --member=server1
+
+describe region --name=/Stocks

@@ -34,21 +34,22 @@ while(TRUE) {
   newrow <- data.frame(temprow)
   colnames(newrow) <- colnames(dataset)
   dataset <- rbind(dataset,newrow)
-  dataset[nrow(dataset),] <- c(streamRow$DaysHigh, streamRow$DaysLow, streamRow$LastTradePriceOnly)
+  dataset[nrow(dataset),] <- c(as.numeric(streamRow$DaysHigh), as.numeric(streamRow$DaysLow), as.numeric(streamRow$LastTradePriceOnly))
+  #dataset[nrow(dataset),] <- c(streamRow$DaysHigh, streamRow$DaysLow, streamRow$LastTradePriceOnly)
   
 
   # Computing and adding the change column
-  originalSet <- dataset
-  dataset <- originalSet[-1:-50,]
-  dataset$Change <- diff(originalSet$Close, lag=50) # applies lag to the change calculation (here we're trying to predict the change within 50 iterations)
+  #originalSet <- dataset
+  #dataset <- originalSet[-1:-50,]
+  #dataset$Change <- diff(originalSet$Close, lag=50) # applies lag to the change calculation (here we're trying to predict the change within 50 iterations)
 
   # Remove the first X lines (x=3 here)  to avoid NAs due to the lag
   #lag_dataset <- lag_dataset[-1:-3,]
 
   # include technical indicators
-  ema <- EMA(dataset$Close, 5) # lag = n-1 (default=9)
+  ema <- EMA(dataset$Close) # lag = n-1 (default=9)
   ema_diff <- dataset$Close - ema # lag = above
-  rsi <- RSI(dataset$Close, 5) # lag = n (default=14)
+  rsi <- RSI(dataset$Close) # lag = n (default=14)
   smi <- SMI(HLC(dataset))     # lag = nSlow+nSig (default=34)
   sar <- SAR(HLC(dataset))     # lag = 0
 
@@ -56,24 +57,35 @@ while(TRUE) {
   low_diff = dataset$Close-dataset$Low
 
   
-  inputs <- data.frame(scale(rsi), scale(ema_diff), scale(dataset$Close), scale(high_diff), scale(low_diff), dataset$Change)
-  names(inputs) <- c("rsi","ema_diff", "close", "high_diff", "low_diff", "change")
-  
+  inputs <- data.frame(scale(rsi), scale(ema_diff), scale(high_diff), scale(low_diff), scale(sar))
+  names(inputs) <- c("rsi","ema_diff", "high_diff", "low_diff", "sar")
+
   #remove extra NAs due to technical indicator lags
-  inputs <- inputs[-1:-5,]
+  inputs <- inputs[-1:-15,]
+  dataset <- dataset[-1:-15,]
+
+  #adds peaks and valleys
+  inputs$peakvalley=0
+  peaks <- findPeaks(dataset$Close, thresh=0.15)
+  valleys <- findValleys(dataset$Close, thresh=0.15)
+  inputs$peakvalley[peaks-1]=-1  #always lagged by 1
+  inputs$peakvalley[valleys-1]=1
+  
+
 
   trainset <-inputs[-nrow(inputs),] # exclude last line, will use that for prediction only
   
   to_predict <- inputs[nrow(inputs),] # we'll predict based on the last value 
-  to_predict <- subset(to_predict, select = -c(change)) # change won't be input - it's what we're predicting.
+  to_predict <- subset(to_predict, select = -c(peakvalley)) # change won't be input - it's what we're predicting.
 
-  mynet <-neuralnet(change ~ close + high_diff + low_diff + ema_diff + rsi, trainset, hidden = 9, lifesign = "full", linear.output = FALSE, threshold = 0.01)
+  mynet <-neuralnet(peakvalley ~ high_diff + low_diff + ema_diff + rsi + sar, trainset, hidden = 6, lifesign = "full", threshold = 0.02)
 
 
   mynet.results <- compute(mynet, to_predict) # should be an input without response column
     
   cat("\nForecasting for input: ",streamRow$LastTradePriceOnly,"\n")
-  cat("\nForecasted ",mynet.results$net.result, " and should have been ", inputs[nrow(inputs),]$change, "\n")
+  cat("\nForecasted ",mynet.results$net.result, "\n")
+  #cat("\nForecasted ",mynet.results$net.result, " and should have been ", inputs[nrow(inputs),]$peakvalley, "\n")
 
   write('Done',stdout())
 

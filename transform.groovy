@@ -1,2 +1,2 @@
-payload.put("timestamp", headers.get('timestamp')) 
+payload.put("tstamp", headers.get('timestamp')) 
 return payload

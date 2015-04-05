@@ -124,7 +124,7 @@ xd:>stream create r_process --definition "gemfire --regionName=Stocks --useLocat
 *or*
 
 ----
-xd:>stream create r_process --definition "tap:stream:stream1.transform > object-to-json | shell --command='Rscript /Users/fmelo/FinanceStream/nn_evaluate_jordan.R' | log " --deploy
+xd:>stream create r_process --definition "tap:stream:process_sink.transform > object-to-json | shell --command='Rscript /Users/fmelo/FinanceStream/nn_evaluate_jordan.R' | log " --deploy
 ----
 
 * At each a few minutes, it's time to train the network using the script __nn_train_jordan.R__

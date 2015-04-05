@@ -104,13 +104,13 @@ In a web browser, access http://localhost:8080/gemfire-api/v1
 ### Create streams in Spring XD
 
 ----
-xd:> stream create process_sink --definition "queue:stocks > splitter --expression=#jsonPath(payload,'$.query.results.quote') | transform --script='file:/Users/fmelo/FinanceStream/transform.groovy'| gemfire-json-server --useLocator=true --host=localhost --port=10334 --regionName=Stocks --keyExpression=payload.getField('timestamp')" --deploy
+xd:> stream create process_sink --definition "queue:stocks >  transform --script='file:/Users/fmelo/FinanceStream/transform.groovy' | gemfire-json-server --useLocator=true --host=localhost --port=10334 --regionName=Stocks --keyExpression=payload.getField('timestamp')" --deploy
 Created and deployed new stream 'process_sink'
 
 xd:>stream create http_source --definition "http > queue:stocks" --deploy
 Created and deployed new stream 'http_source'
 
-xd:>stream create yahoo_finance_source --definition "trigger --fixedDelay=1 | http-client --url='''https://query.yahooapis.com/v1/public/yql?q=select * from yahoo.finance.quote where symbol in (\"MSFT\")&format=json&env=store://datatables.org/alltableswithkeys''' --httpMethod=GET > queue:stocks" --deploy
+xd:>stream create yahoo_finance_source --definition "trigger --fixedDelay=1 | http-client --url='''https://query.yahooapis.com/v1/public/yql?q=select * from yahoo.finance.quote where symbol in (\"MSFT\")&format=json&env=store://datatables.org/alltableswithkeys''' --httpMethod=GET | splitter --expression=#jsonPath(payload,'$.query.results.quote')  > queue:stocks" --deploy
 Created and deployed new stream 'yahoo_finance_source'
 ----
 
@@ -125,6 +125,12 @@ xd:>stream create r_process --definition "gemfire --regionName=Stocks --useLocat
 
 ----
 xd:>stream create r_process --definition "tap:stream:process_sink.transform > object-to-json | shell --command='Rscript /Users/fmelo/FinanceStream/nn_evaluate_jordan.R' | log " --deploy
+----
+
+Deploy the simulator:
+
+----
+xd:>stream create simulator --definition "trigger --fixedDelay=20  | http-client --url='''http://localhost:8080/gemfire-api/v1/queries/adhoc?q=SELECT%20DISTINCT%20*%20FROM%20/Stocks%20s%20ORDER%20BY%20java.util.Random.nextInt()%20LIMIT%2010000''' --httpMethod=GET | splitter --expression=#jsonPath(payload,'$') | transform --script='file:/Users/fmelo/FinanceStream/randomize.groovy' > queue:stocks " --deploy
 ----
 
 * At each a few minutes, it's time to train the network using the script __nn_train_jordan.R__

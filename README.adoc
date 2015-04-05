@@ -115,10 +115,16 @@ Created and deployed new stream 'yahoo_finance_source'
 ----
 
 
-* Stream 2 could also be done through a tap:
+* Stream 2 can be done through either a *Gem subscription* or a *tap*:
 
 ----
-xd:>stream create stream2 --definition "tap:stream:stream1.transform > object-to-json | shell --command='Rscript /Users/fmelo/FinanceStream/nn_evaluate_jordan.R' | log " --deploy
+xd:>stream create r_process --definition "gemfire --regionName=Stocks --useLocator=true --host=localhost --port=10334 | shell --command='Rscript /Users/fmelo/FinanceStream/nn_evaluate_jordan.R' | log " --deploy
+----
+
+*or*
+
+----
+xd:>stream create r_process --definition "tap:stream:stream1.transform > object-to-json | shell --command='Rscript /Users/fmelo/FinanceStream/nn_evaluate_jordan.R' | log " --deploy
 ----
 
 * At each a few minutes, it's time to train the network using the script __nn_train_jordan.R__

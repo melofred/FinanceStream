@@ -104,11 +104,14 @@ In a web browser, access http://localhost:8080/gemfire-api/v1
 ### Create streams in Spring XD
 
 ----
-xd:>stream create stream1 --definition "trigger --fixedDelay=10 | http-client --url='''https://query.yahooapis.com/v1/public/yql?q=select * from yahoo.finance.quote where symbol in (\"MSFT\")&format=json&env=store://datatables.org/alltableswithkeys''' --httpMethod=GET | splitter --expression=#jsonPath(payload,'$.query.results.quote') | transform --script='file:/Users/fmelo/FinanceStream/transform.groovy'| gemfire-json-server --useLocator=true --host=localhost --port=10334 --regionName=Stocks --keyExpression=payload.getField('timestamp')" --deploy
-Created and deployed new stream 'stream1'
+xd:> stream create process_sink --definition "queue:stocks > splitter --expression=#jsonPath(payload,'$.query.results.quote') | transform --script='file:/Users/fmelo/FinanceStream/transform.groovy'| gemfire-json-server --useLocator=true --host=localhost --port=10334 --regionName=Stocks --keyExpression=payload.getField('timestamp')" --deploy
+Created and deployed new stream 'process_sink'
 
-xd:>stream create stream2 --definition "gemfire --regionName=Stocks --useLocator=true --host=localhost --port=10334 | shell --command='Rscript /Users/fmelo/FinanceStream/nn_evaluate_jordan.R' | log " --deploy
-Created and deployed new stream 'stream2'
+xd:>stream create http_source --definition "http > queue:stocks" --deploy
+Created and deployed new stream 'http_source'
+
+xd:>stream create yahoo_finance_source --definition "trigger --fixedDelay=1 | http-client --url='''https://query.yahooapis.com/v1/public/yql?q=select * from yahoo.finance.quote where symbol in (\"MSFT\")&format=json&env=store://datatables.org/alltableswithkeys''' --httpMethod=GET > queue:stocks" --deploy
+Created and deployed new stream 'yahoo_finance_source'
 ----
 
 

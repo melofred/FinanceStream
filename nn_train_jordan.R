@@ -10,7 +10,7 @@ require("RSNNS")
   # http://localhost:8080/gemfire-api/v1/Stocks/ 
   #historical <- getURL(paste0('http://localhost:8080/gemfire-api/v1/Stocks?limit=500'))
 
-  historical <- getURL(paste0('http://localhost:8080/gemfire-api/v1/queries/adhoc?q=SELECT%20DISTINCT%20*%20FROM%20/Stocks%20s%20ORDER%20BY%20%22timestamp%22%20desc%20LIMIT%2010000'))
+  historical <- getURL(paste0('http://localhost:8080/gemfire-api/v1/queries/adhoc?q=SELECT%20DISTINCT%20*%20FROM%20/Stocks%20s%20ORDER%20BY%20%22timestamp%22%20LIMIT%20100000'))
 
   historicalJSon <- fromJSON(historical)
 
@@ -54,8 +54,8 @@ require("RSNNS")
 
   #adds peaks and valleys
   inputs$peakvalley=0
-  peaks <- findPeaks(dataset$Close, thresh=0.15)
-  valleys <- findValleys(dataset$Close, thresh=0.15)
+  peaks <- findPeaks(dataset$Close, thresh=0.006)
+  valleys <- findValleys(dataset$Close, thresh=0.006)
   inputs$peakvalley[peaks-1]=-1  #always lagged by 1
   inputs$peakvalley[valleys-1]=1
   
@@ -65,14 +65,14 @@ require("RSNNS")
 
   trainset <- subset(inputs, select = -c(peakvalley))
 
-  jordannet <- jordan(x=trainset,y=inputs$peakvalley, maxit=1000)
+  jordannet <- jordan(x=trainset,y=inputs$peakvalley, maxit=100000)
 
   write('Saving network....',stdout());
 
   f <- file('/Users/fmelo/FinanceStream/mynet_jordan.RData')
   save(jordannet, file=f);
   flush(f)
- # close(f)
+  close(f)
 
   write('Done \r\n',stdout())
 

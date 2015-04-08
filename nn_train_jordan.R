@@ -23,22 +23,26 @@ require("RSNNS")
   high_diff = dataset$High-dataset$Close
   low_diff = dataset$Close-dataset$Low
 
+  ema_lag <- lag.xts (ema, k=-1)
   
-  inputs <- data.frame(dataset$Close, ema, ema_diff, rsi, smi, sar, high_diff, low_diff)
-  names(inputs) <- c("close", "ema", "ema_diff", "rsi", "smi","sar", "high_diff", "low_diff")
+  inputs <- data.frame(dataset$Close, ema, ema_diff, rsi, sar, high_diff, low_diff)
+  names(inputs) <- c("close", "ema", "ema_diff", "rsi", "sar", "high_diff", "low_diff")
 
 
   #remove extra NAs due to technical indicator lags
-  inputs <- inputs[-1:-35,]
-  dataset <- dataset[-1:-35,]
+  inputs <- inputs[36:NROW(inputs)-1,]
+  dataset <- dataset[36:NROW(dataset)-1,]
+  ema_lag <- ema_lag[36:NROW(ema_lag)-1]
+
+  
 
   # normalize
   inputs$closeNorm=normalizeData(inputs$close)
-  inputs$ema=normalizeData(inputs$ema)
+  inputs$emaNorm=normalizeData(inputs$ema)
   inputs$ema_diff=normalizeData(inputs$ema_diff)
   inputs$rsi=normalizeData(inputs$rsi)
   inputs$sar=normalizeData(inputs$sar)
-  inputs$smi=normalizeData(inputs$smi) 
+#  inputs$smi=normalizeData(inputs$smi) 
   inputs$high_diff=normalizeData(inputs$high_diff)
   inputs$low_diff=normalizeData(inputs$low_diff)
 
@@ -51,11 +55,9 @@ require("RSNNS")
   
 
 
-  #trainset <-inputs[-nrow(inputs),] # exclude last line, will use that for prediction only
+  trainset <- subset(inputs, select = c(close, ema))
 
-  trainset <- subset(inputs, select = -c(ema, rsi, sar, smi, high_diff, low_diff, peakvalley))
-
-  jordannet <- jordan(x=trainset,y=inputs$peakvalley, size=c(15), learnFuncParams=c(0.3), linOut=FALSE, maxit=10000)
+  jordannet <- jordan(x=trainset,y=ema_lag, size=c(5), learnFuncParams=c(0.2), linOut=FALSE, maxit=10000)
 
   write('Saving network....',stdout());
 

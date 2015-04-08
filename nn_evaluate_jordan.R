@@ -9,10 +9,11 @@ require("RSNNS")
 # Read from stdin - need to find a pattern to stop reading?
 
 f <- file("stdin")
+#f <- file("stocks_in_2")
 open(f)
 while(TRUE) {
   line <- readLines(f,n=1)
-  write(line, stdout())
+  #write(line, stdout())
   streamRow <- fromJSON(line)
   
 
@@ -58,7 +59,7 @@ while(TRUE) {
 
   # normalize
   inputs$closeNorm=normalizeData(inputs$close)
-  inputs$ema=normalizeData(inputs$ema)
+  inputs$emaNorm=normalizeData(inputs$ema)
   inputs$ema_diff=normalizeData(inputs$ema_diff)
   inputs$rsi=normalizeData(inputs$rsi)
   inputs$sar=normalizeData(inputs$sar)
@@ -69,15 +70,24 @@ while(TRUE) {
 
 
   to_predict <- inputs[nrow(inputs),] # we'll predict based on the last value 
-  to_predict <- subset(to_predict, select = -c(ema, rsi, sar, smi, high_diff, low_diff))
+  to_predict <- subset(to_predict, select = c(close, ema))
+
  
   load(file='/Users/fmelo/FinanceStream/mynet_jordan.RData')
   results <- predict(jordannet, to_predict) # should be an input without response column
     
-  cat("\nForecasting for input: ",streamRow$LastTradePriceOnly,"\n")
-  cat("\nForecasted ",results, "\n")
+  streamRow$predictedPeak <- results[1,1]
 
-  write('Done',stdout())
+  #cat("\nForecasting for timestamp: ",streamRow$timestamp,"  value  ", streamRow$predictedPeak, "\n")
+ 
+#  inputWithPrediction=streamRow[1,]
+
+  predicted_line <- toJSON(as.data.frame(streamRow));
+  cat (predicted_line)
+
+#  cat("\nForecasting for input: ",streamRow$LastTradePriceOnly,"\n")
+  #cat("\nForecasted ",results, "\n")
+  #write('Done',stdout())
 
 
   write('\r\n',stdout())

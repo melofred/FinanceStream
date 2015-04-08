@@ -118,13 +118,13 @@ Created and deployed new stream 'yahoo_finance_source'
 * Stream 2 can be done through either a *Gem subscription* or a *tap*:
 
 ----
-xd:>stream create r_process --definition "gemfire --regionName=Stocks --useLocator=true --host=localhost --port=10334 | shell --command='Rscript /Users/fmelo/FinanceStream/nn_evaluate_jordan.R' | log " --deploy
+xd:>stream create r_process --definition "gemfire --regionName=Stocks --useLocator=true --host=localhost --port=10334 | shell --command='Rscript /Users/fmelo/FinanceStream/nn_evaluate_jordan.R' | splitter --expression=#jsonPath(payload,'$') | gemfire-json-server --useLocator=true --host=localhost --port=10334 --regionName=Predictions --keyExpression=payload.getField('timestamp')  " --deploy
 ----
 
 *or*
 
 ----
-xd:>stream create r_process --definition "tap:stream:process_sink.transform > object-to-json | shell --command='Rscript /Users/fmelo/FinanceStream/nn_evaluate_jordan.R' | log " --deploy
+xd:>stream create r_process --definition "tap:stream:process_sink.transform > object-to-json | shell --command='Rscript /Users/fmelo/FinanceStream/nn_evaluate_jordan.R' | splitter --expression=#jsonPath(payload,'$') | gemfire-json-server --useLocator=true --host=localhost --port=10334 --regionName=Predictions --keyExpression=payload.getField('timestamp') " --deploy
 ----
 
 Deploy the simulator:

@@ -82,7 +82,10 @@ while(TRUE) {
  
 #  inputWithPrediction=streamRow[1,]
 
-  predicted_line <- toJSON(as.data.frame(streamRow));
+  predicted_line <- data.frame(streamRow$timestamp, streamRow$predictedPeak);
+  names(predicted_line) <- c("timestamp","predictedPeak")
+  predicted_line <- toJSON(predicted_line);
+
   cat (predicted_line)
 
 #  cat("\nForecasting for input: ",streamRow$LastTradePriceOnly,"\n")

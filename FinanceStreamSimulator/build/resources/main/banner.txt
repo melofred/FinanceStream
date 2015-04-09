@@ -9,3 +9,6 @@
                                                                                                                                              
                                                                                                                                                                                                                                                                                           
 Finance Stream Simulator
+
+Usage:  java -jar FinanceStreamSimulator.jar [--serverUrl=<URL>] [--numberOfMessages=<messages>] [--basePrice=<price>] [--scale=<scale>]
+

@@ -25,6 +25,9 @@ public class Simulator implements CommandLineRunner {
 
 	@Value("${scale}") 
 	private double scale;
+	
+	@Value("${symbol}") 
+	private String symbol;
 
 	private RestTemplate restTemplate = new RestTemplate();
 	
@@ -39,6 +42,7 @@ public class Simulator implements CommandLineRunner {
 		logger.info(">>> Number of messages: "+numberOfMessages);
 		logger.info(">>> Base Price: "+basePrice);
 		logger.info(">>> Scale: "+scale);
+		logger.info(">>> Symbol: "+symbol);
 		logger.info("--------------------------------------");
 		
 		double low = basePrice - scale;
@@ -51,11 +55,10 @@ public class Simulator implements CommandLineRunner {
 			double value = ( basePrice - Math.sin( Math.toRadians(i) ) * scale );
 
 			StockPrice price = new StockPrice();
-			price.setSymbol("MSFT");
 			price.setPrice(value);
 			price.setLow(low);
 			price.setHigh(high);
-			
+			price.setSymbol(symbol);
 			StockPrice response = restTemplate.postForObject(URL, price, StockPrice.class);
 			
 		}		

@@ -6,4 +6,7 @@
   <region name="TEST">
     <region-attributes scope="distributed-ack" data-policy="replicate"/>
   </region>
+  <region name="Predictions">
+    <region-attributes scope="distributed-ack" data-policy="replicate"/>
+  </region>
 </cache>

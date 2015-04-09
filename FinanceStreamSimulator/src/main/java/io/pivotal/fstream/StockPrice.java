@@ -1,10 +1,13 @@
 package io.pivotal.fstream;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-
-@JsonIgnoreProperties(ignoreUnknown = true)
+@ComponentScan
 public class StockPrice {
 
 	@JsonProperty("symbol")

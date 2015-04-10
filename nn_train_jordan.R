@@ -60,7 +60,7 @@ require("RSNNS")
   trainset <- subset(inputs, select = c(closeNorm, emaNorm, rsi))
 
 #  jordannet <- jordan(x=trainset,y=ema_lag, size=c(15), learnFuncParams=c(0.2), linOut=FALSE, maxit=10000)
-  jordannet <- jordan(x=trainset,y=change, size=c(15), linOut=FALSE, learnFuncParams=c(0.2), maxit=10000)
+  jordannet <- jordan(x=trainset,y=change, size=c(15), learnFuncParams=c(0.2), maxit=10000)
 
   write('Saving network....',stdout());
 

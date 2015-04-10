@@ -8,12 +8,12 @@ require("RSNNS")
 
 # Read from stdin - need to find a pattern to stop reading?
 
-#f <- file("stdin")
-f <- file("sample_data.out")
+f <- file("stdin")
+#f <- file("sample_data.out")
 open(f)
 while(TRUE) {
   line <- readLines(f,n=1)
-  cat("\nUsing line: ",line, "\n")  
+  #cat("\nUsing line: ",line, "\n")  
 
   #write(line, stdout())
   streamRow <- fromJSON(line)

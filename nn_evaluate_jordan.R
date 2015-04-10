@@ -8,11 +8,13 @@ require("RSNNS")
 
 # Read from stdin - need to find a pattern to stop reading?
 
-f <- file("stdin")
-#f <- file("stocks_in_2")
+#f <- file("stdin")
+f <- file("sample_data.out")
 open(f)
 while(TRUE) {
   line <- readLines(f,n=1)
+  cat("\nUsing line: ",line, "\n")  
+
   #write(line, stdout())
   streamRow <- fromJSON(line)
   
@@ -70,8 +72,7 @@ while(TRUE) {
 
 
   to_predict <- inputs[nrow(inputs),] # we'll predict based on the last value 
-  to_predict <- subset(to_predict, select = c(close, ema))
-
+  to_predict <- subset(to_predict, select = c(closeNorm, emaNorm, rsi))
  
   load(file='/Users/fmelo/FinanceStream/mynet_jordan.RData')
   results <- predict(jordannet, to_predict) # should be an input without response column
@@ -82,8 +83,8 @@ while(TRUE) {
  
 #  inputWithPrediction=streamRow[1,]
 
-  predicted_line <- data.frame(streamRow$timestamp, streamRow$predictedPeak);
-  names(predicted_line) <- c("timestamp","predictedPeak")
+  predicted_line <- data.frame(streamRow$timestamp, streamRow$LastTradePriceOnly, streamRow$predictedPeak);
+  names(predicted_line) <- c("timestamp","close","predictedPeak")
   predicted_line <- toJSON(predicted_line);
 
   cat (predicted_line)

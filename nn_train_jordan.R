@@ -23,6 +23,8 @@ require("RSNNS")
   high_diff = dataset$High-dataset$Close
   low_diff = dataset$Close-dataset$Low
 
+  change <- diff(dataset$Close, lag=3) # applies lag to the change calculation 
+
   ema_lag <- lag.xts (ema, k=-1)
   
   inputs <- data.frame(dataset$Close, ema, ema_diff, rsi, sar, high_diff, low_diff)
@@ -30,10 +32,10 @@ require("RSNNS")
 
 
   #remove extra NAs due to technical indicator lags
-  inputs <- inputs[36:NROW(inputs)-1,]
-  dataset <- dataset[36:NROW(dataset)-1,]
-  ema_lag <- ema_lag[36:NROW(ema_lag)-1]
-
+  inputs <- inputs[36:(NROW(inputs)-3),]
+  dataset <- dataset[36:(NROW(dataset)-3),]
+  ema_lag <- ema_lag[36:(NROW(ema_lag)-3)]
+  change <- change[36:NROW(change)]
   
 
   # normalize
@@ -48,16 +50,17 @@ require("RSNNS")
 
   #adds peaks and valleys
   inputs$peakvalley=0
-  peaks <- findPeaks(dataset$Close, thresh=0.0015)
-  valleys <- findValleys(dataset$Close, thresh=0.0015)
+  peaks <- findPeaks(dataset$Close, thresh=0.00015)
+  valleys <- findValleys(dataset$Close, thresh=0.00015)
   inputs$peakvalley[peaks-1]=-1  #always lagged by 1
   inputs$peakvalley[valleys-1]=1
   
 
 
-  trainset <- subset(inputs, select = c(close, ema))
+  trainset <- subset(inputs, select = c(closeNorm, emaNorm, rsi))
 
-  jordannet <- jordan(x=trainset,y=ema_lag, size=c(5), learnFuncParams=c(0.2), linOut=FALSE, maxit=10000)
+#  jordannet <- jordan(x=trainset,y=ema_lag, size=c(15), learnFuncParams=c(0.2), linOut=FALSE, maxit=10000)
+  jordannet <- jordan(x=trainset,y=change, size=c(15), linOut=FALSE, learnFuncParams=c(0.2), maxit=10000)
 
   write('Saving network....',stdout());
 

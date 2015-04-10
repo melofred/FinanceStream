@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE client-cache PUBLIC
+        "-//GemStone Systems, Inc.//GemFire Declarative Caching 8.0//EN"
+        "http://www.gemstone.com/dtd/cache8_0.dtd">
+
+<client-cache>
+    <pool name="client" subscription-enabled="true">
+        <locator host="anakin" port="10334" />
+    </pool>
+
+    <region name="Stocks">
+        <region-attributes refid="PROXY">
+            <cache-listener>
+                <class-name>StockListener</class-name>
+            </cache-listener>
+        </region-attributes>
+    </region>
+
+</client-cache>

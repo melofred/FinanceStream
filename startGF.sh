@@ -1,4 +1,10 @@
 #!/bin/bash
-export XD_HOME=~/Downloads/spring-xd-1.1.0.RELEASE/
+export GF_HOME=/Users/wmarkito/Pivotal/GemFire/sources/github/gemfire/build-artifacts/mac/product
+export PATH=$GF_HOME/bin:$PATH
 
-exec $XD_HOME/gemfire/bin/gemfire-server FinanceStream-gemfire.xml
+gfsh run --file=setup.gfsh
+
+
+
+
+

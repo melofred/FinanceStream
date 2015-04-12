@@ -1,149 +1,96 @@
-/**
- * @author wmarkito
- *         2015
- */
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.Scene;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
+import javafx.collections.*;
+import javafx.event.EventHandler;
+import javafx.scene.*;
+import javafx.scene.chart.*;
+import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-
+/** Displays a LineChart which displays the value of a plotted Node when you hover over the Node. */
 public class LineChartSample extends Application {
-    final ObservableList<XYChart.Data<String, Number>> dataset = FXCollections.observableArrayList();
+    @SuppressWarnings("unchecked")
+    @Override public void start(Stage stage) {
+        final LineChart lineChart = new LineChart(
+                new NumberAxis(), new NumberAxis(),
+                FXCollections.observableArrayList(
+                        new XYChart.Series(
+                                "My portfolio",
+                                FXCollections.observableArrayList(
+                                        plot(23, 14, 15, 24, 34, 36, 22, 45, 43, 17, 29, 25)
+                                )
+                        )
+                )
+        );
+        lineChart.setCursor(Cursor.CROSSHAIR);
 
-    public ObservableList<XYChart.Data<String, Number>> plot(Collection<LinkedHashMap> map) {
-        for (LinkedHashMap entry: (Collection<LinkedHashMap>) map) {
-            final XYChart.Data data = new XYChart.Data<>(String.valueOf(entry.get("timestamp")), entry.get("LastTradePriceOnly"));
+        lineChart.setTitle("Stock Monitoring, 2013");
+
+        stage.setScene(new Scene(lineChart, 500, 400));
+        stage.show();
+    }
+
+    /** @return plotted y values for monotonically increasing integer x values, starting from x=1 */
+    public ObservableList<XYChart.Data<Integer, Integer>> plot(int... y) {
+        final ObservableList<XYChart.Data<Integer, Integer>> dataset = FXCollections.observableArrayList();
+        int i = 0;
+        while (i < y.length) {
+            final XYChart.Data<Integer, Integer> data = new XYChart.Data<>(i + 1, y[i]);
+            data.setNode(
+                    new HoveredThresholdNode(
+                            (i == 0) ? 0 : y[i-1],
+                            y[i]
+                    )
+            );
+
             dataset.add(data);
+            i++;
         }
 
         return dataset;
     }
 
-    @Override public void start(Stage stage) throws IOException, InterruptedException {
+    /** a node which displays a value on hover, but is otherwise empty */
+    class HoveredThresholdNode extends StackPane {
+        HoveredThresholdNode(int priorValue, int value) {
+            setPrefSize(15, 15);
 
-        stage.setTitle("ApacheCon 2015 - SpringXD + GemFire + R Example");
-        final CategoryAxis xAxis = new CategoryAxis();
-        final NumberAxis yAxis = new NumberAxis();
-        xAxis.setLabel("Timestamp");
-        xAxis.setAnimated(true);
-        xAxis.setAutoRanging(true);
-        final LineChart<String,Number> lineChart =
-                new LineChart<String,Number>(xAxis,yAxis);
+            final Label label = createDataThresholdLabel(priorValue, value);
 
-        lineChart.setAnimated(true);
-        lineChart.setTitle("GemFire REST Stock Monitoring");
-
-        RestTemplate restTemplate = new RestTemplate();
-
-        ResponseEntity<String> result = restTemplate.getForEntity("http://localhost:9090/gemfire/queries/adhoc?q=SELECT DISTINCT * FROM /Stocks order by \"timestamp\" LIMIT 500", String.class);
-
-        ObjectMapper mapper  = new ObjectMapper();
-
-        ArrayList<LinkedHashMap> map = mapper.readValue(result.getBody(), ArrayList.class);
-
-        XYChart.Series series1 = null;
-
-        boolean setup = false;
-        for(LinkedHashMap entry : map){
-
-            System.out.println(entry);
-
-//            for (LinkedHashMap entry: (Collection<LinkedHashMap>) s) {
-                //Stocks stock = mapper.convertValue(entry, Stocks.class)
-                //System.out.println(entry.get("AverageDailyVolume"));
-
-                if (!setup) {
-                    series1 = new XYChart.Series();
-                    series1.setName((String) entry.get("symbol"));
-                    setup = true;
+            setOnMouseEntered(new EventHandler<MouseEvent>() {
+                @Override public void handle(MouseEvent mouseEvent) {
+                    getChildren().setAll(label);
+                    setCursor(Cursor.NONE);
+                    toFront();
                 }
-
-//              series1.getData().add(new XYChart.Data(String.valueOf(entry.get("timestamp")), ));
-
+            });
+            setOnMouseExited(new EventHandler<MouseEvent>() {
+                @Override public void handle(MouseEvent mouseEvent) {
+                    getChildren().clear();
+                    setCursor(Cursor.CROSSHAIR);
+                }
+            });
         }
-        series1.setData(plot(map));
 
+        private Label createDataThresholdLabel(int priorValue, int value) {
+            final Label label = new Label(value + "");
+            label.getStyleClass().addAll("default-color0", "chart-line-symbol", "chart-series-line");
+            label.setStyle("-fx-font-size: 20; -fx-font-weight: bold;");
 
-//        private int averageDailyVolume;
-//        private double change, daysLow, daysHigh, yearLow, yearHigh;
-//        private String marketCapitaliation;
-//        private double lastTradePriceOnly;
-//        private String daysRange, name;
-//        private int volume;
-//        private String stockExchange;
-//        private long timestamp;
+            if (priorValue == 0) {
+                label.setTextFill(Color.DARKGRAY);
+            } else if (value > priorValue) {
+                label.setTextFill(Color.FORESTGREEN);
+            } else {
+                label.setTextFill(Color.FIREBRICK);
+            }
 
-//        XYChart.Series series1 = new XYChart.Series();
-//        series1.setName("Portfolio 1");
-//
-//        series1.getData().add(new XYChart.Data("Jan", 23));
-//        series1.getData().add(new XYChart.Data("Feb", 14));
-//        series1.getData().add(new XYChart.Data("Mar", 15));
-//        series1.getData().add(new XYChart.Data("Apr", 24));
-//        series1.getData().add(new XYChart.Data("May", 34));
-//        series1.getData().add(new XYChart.Data("Jun", 36));
-//        series1.getData().add(new XYChart.Data("Jul", 22));
-//        series1.getData().add(new XYChart.Data("Aug", 45));
-//        series1.getData().add(new XYChart.Data("Sep", 43));
-//        series1.getData().add(new XYChart.Data("Oct", 17));
-//        series1.getData().add(new XYChart.Data("Nov", 29));
-//        series1.getData().add(new XYChart.Data("Dec", 25));
-
-//        XYChart.Series series2 = new XYChart.Series();
-//        series2.setName("Portfolio 2");
-//        series2.getData().add(new XYChart.Data("Jan", 33));
-//        series2.getData().add(new XYChart.Data("Feb", 34));
-//        series2.getData().add(new XYChart.Data("Mar", 25));
-//        series2.getData().add(new XYChart.Data("Apr", 44));
-//        series2.getData().add(new XYChart.Data("May", 39));
-//        series2.getData().add(new XYChart.Data("Jun", 16));
-//        series2.getData().add(new XYChart.Data("Jul", 55));
-//        series2.getData().add(new XYChart.Data("Aug", 54));
-//        series2.getData().add(new XYChart.Data("Sep", 48));
-//        series2.getData().add(new XYChart.Data("Oct", 27));
-//        series2.getData().add(new XYChart.Data("Nov", 37));
-//        series2.getData().add(new XYChart.Data("Dec", 29));
-//
-//        XYChart.Series series3 = new XYChart.Series();
-//        series3.setName("Portfolio 3");
-//        series3.getData().add(new XYChart.Data("Jan", 44));
-//        series3.getData().add(new XYChart.Data("Feb", 35));
-//        series3.getData().add(new XYChart.Data("Mar", 36));
-//        series3.getData().add(new XYChart.Data("Apr", 33));
-//        series3.getData().add(new XYChart.Data("May", 31));
-//        series3.getData().add(new XYChart.Data("Jun", 26));
-//        series3.getData().add(new XYChart.Data("Jul", 22));
-//        series3.getData().add(new XYChart.Data("Aug", 25));
-//        series3.getData().add(new XYChart.Data("Sep", 43));
-//        series3.getData().add(new XYChart.Data("Oct", 44));
-//        series3.getData().add(new XYChart.Data("Nov", 45));
-//        series3.getData().add(new XYChart.Data("Dec", 44));
-
-        Scene scene  = new Scene(lineChart,800,600);
-        lineChart.getData().addAll(series1);
-//        lineChart.getData().addAll(series1, series2, series3);
-
-        stage.setScene(scene);
-        stage.show();
-
+            label.setMinSize(Label.USE_PREF_SIZE, Label.USE_PREF_SIZE);
+            return label;
+        }
     }
 
-
-    public static void main(String[] args) {
-        launch(args);
-    }
+    public static void main(String[] args) { launch(args); }
 }

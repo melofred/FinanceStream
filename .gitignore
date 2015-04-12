@@ -1,3 +1,5 @@
 **/*.log
 logs/**/*.*
 vf.gf.*
+locator1/**/*.*
+server1/**/*.*

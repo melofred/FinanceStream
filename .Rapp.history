@@ -1,9 +1,16 @@
 source('nn_train_jordan.R')
-inputs
-peaks
-valleys
-inputs$peakvalley
-trainset
-source('nn_train_jordan.R')
-inputs$peakvalley
-source('nn_evaluate_jordan.R')
+jordannet
+jordannet#IterativeTestError
+jordannet$IterativeTestError
+jordannet
+plot(data_in)
+plot(data_in, type='l')
+plot(data_in, type='l')
+plot(data_in)
+plot(data_out)
+plot(data_out, type='l'')
+'
+plot(data_out, type='l')
+plot(data_out)
+plot(data_out)
+lines(jordannet$fitted.values, col = "green")

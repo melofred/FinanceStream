@@ -10,7 +10,7 @@ import java.io.IOException;
  */
 public class GemFireClient {
 
-    private static String regionName = "Stocks";
+    private static String regionName = "Predictions";
 
     public static void main(String[] args) throws IOException, InterruptedException {
         Region stocksRegion = cache.getRegion(regionName);

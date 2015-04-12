@@ -31,7 +31,7 @@ public class FinanceUI extends Application {
     private ConcurrentLinkedQueue<Number> timeQueue = new ConcurrentLinkedQueue<Number>();
     private ConcurrentLinkedQueue<Number> predictionDataQueue = new ConcurrentLinkedQueue<Number>();
     private static FinanceUI instance;
-    private final static String regionName = "Stocks";
+    private final static String regionName = "Predictions";
     private static Region stocksRegion;
 
 

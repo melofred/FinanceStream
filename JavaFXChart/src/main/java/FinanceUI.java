@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class FinanceUI extends Application {
 
-    private static final int MAX_DATA_POINTS = 500;
+    private static final int MAX_DATA_POINTS = 200;
     private int xSeriesData = 0;
     private XYChart.Series stockPriceSeries;
     private XYChart.Series predictionSeries;
@@ -83,8 +83,8 @@ public class FinanceUI extends Application {
         yAxis = new NumberAxis();        
         yAxis.setAutoRanging(false);
         yAxis.setForceZeroInRange(false);
-        yAxis.setLowerBound(210);
-        yAxis.setUpperBound(225);
+        yAxis.setLowerBound(218);
+        yAxis.setUpperBound(222);
         
         yAxis.setLabel("Stock Price ($)");
 

@@ -6,7 +6,7 @@ require("RSNNS")
 
 
 
-  historical <- getURL(paste0('http://localhost:8080/gemfire-api/v1/queries/adhoc?q=SELECT%20DISTINCT%20*%20FROM%20/Stocks%20s%20ORDER%20BY%20%22timestamp%22%20desc%20LIMIT%20200'))
+  historical <- getURL(paste0('http://localhost:8080/gemfire-api/v1/queries/adhoc?q=SELECT%20DISTINCT%20*%20FROM%20/Stocks%20s%20ORDER%20BY%20%22timestamp%22%20desc%20LIMIT%20100000'))
 
   historicalSet <- fromJSON(historical)
   historicalSet <-historicalSet[order(historicalSet$timestamp),]
@@ -64,7 +64,7 @@ require("RSNNS")
   patterns <- splitForTrainingAndTest(data_in, data_out, ratio = 0.15)
   
 
-   jordannet <- jordan(patterns$inputsTrain, patterns$targetsTrain, size = c(10), learnFuncParams = c(0.2), maxit = 1000, inputsTest = patterns$inputsTest, targetsTest = patterns$targetsTest, linOut = FALSE)
+   jordannet <- jordan(patterns$inputsTrain, patterns$targetsTrain, size = c(10), learnFuncParams = c(0.2), maxit = 100000, inputsTest = patterns$inputsTest, targetsTest = patterns$targetsTest, linOut = FALSE)
 
 
   write('Saving network....',stdout());
@@ -76,3 +76,5 @@ require("RSNNS")
 
   write('Done \r\n',stdout())
 
+
+  write('\r\n',stdout())

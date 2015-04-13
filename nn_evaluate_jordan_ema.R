@@ -88,7 +88,7 @@ while(TRUE) {
  
 #  inputWithPrediction=streamRow[1,]
 
-  predicted_line <- data.frame(streamRow$timestamp, streamRow$LastTradePriceOnly, streamRow$predictedPeak);
+  predicted_line <- data.frame(streamRow$timestamp, inputs$ema[nrow(inputs)], streamRow$predictedPeak);
   names(predicted_line) <- c("timestamp","close","predictedPeak")
   predicted_line <- toJSON(predicted_line);
 

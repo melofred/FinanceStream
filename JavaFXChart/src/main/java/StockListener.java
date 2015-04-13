@@ -33,7 +33,7 @@ public class StockListener<K,V> extends CacheListenerAdapter<K, V> implements De
             logger.severe("Problems parsing event for chart update:" + ex.getMessage());
         }
 
-        logger.info(String.format("Received afterCreate event for entry: %s, %s", e.getKey(), e.getNewValue().getClass()));
+        logger.fine(String.format("Received afterCreate event for entry: %s, %s", e.getKey(), e.getNewValue().getClass()));
     }
 
     @Override

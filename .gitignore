@@ -1,10 +1,6 @@
 **/*.log
 logs/**/*.*
 vf.gf.*
-<<<<<<< HEAD
 locator1/**/*.*
 server1/**/*.*
-=======
-locator1/*
-server1/*
->>>>>>> 496d2492ce6f92052251ed5524da5f98fcd896bb
+**/build/**/*.*

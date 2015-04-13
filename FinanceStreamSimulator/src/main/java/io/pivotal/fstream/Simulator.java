@@ -1,7 +1,6 @@
 package io.pivotal.fstream;
 
-import io.pivotal.fstream.StockPrice;
-
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -62,6 +61,8 @@ public class Simulator implements CommandLineRunner {
 			StockPrice response = restTemplate.postForObject(URL, price, StockPrice.class);
 			
 		}		
+		
+		restTemplate.getForObject("http://localhost:8080/gemfire-api/v1/queries/adhoc?q=SELECT%20DISTINCT%20*%20FROM%20/Stocks%20s%20ORDER%20BY%20%22timestamp%22%20desc%20LIMIT%20200", List<StockPrice>, null);
 		
 		logger.info("done");
 		

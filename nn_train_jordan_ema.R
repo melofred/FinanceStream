@@ -5,6 +5,7 @@ require("jsonlite")
 require("RSNNS")
 
 
+while(TRUE) {
 
   historical <- getURL(paste0('http://localhost:8080/gemfire-api/v1/queries/adhoc?q=SELECT%20DISTINCT%20*%20FROM%20/Stocks%20s%20ORDER%20BY%20%22timestamp%22%20desc%20LIMIT%20200'))
 
@@ -63,9 +64,9 @@ require("RSNNS")
 
   patterns <- splitForTrainingAndTest(data_in, data_out, ratio = 0.15)
   
+  load(file='/Users/fmelo/FinanceStream/mynet_jordan.RData')
 
-   jordannet <- jordan(patterns$inputsTrain, patterns$targetsTrain, size = c(10), learnFuncParams = c(0.2), maxit = 1000, inputsTest = patterns$inputsTest, targetsTest = patterns$targetsTest, linOut = FALSE)
-
+  jordannet <- train(jordannet, patterns$inputsTrain, patterns$targetsTrain, inputsTest = patterns$inputsTest, targetsTest = patterns$targetsTest, serializeTrainedObject = TRUE)
 
   write('Saving network....',stdout());
 
@@ -75,4 +76,4 @@ require("RSNNS")
   close(f)
 
   write('Done \r\n',stdout())
-
+}

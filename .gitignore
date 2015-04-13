@@ -1,6 +1,9 @@
 **/*.log
 logs/**/*.*
 vf.gf.*
-locator1/**/*.*
-server1/**/*.*
 **/build/**/*.*
+locator1/
+server1/
+
+*.idea
+*.gradle

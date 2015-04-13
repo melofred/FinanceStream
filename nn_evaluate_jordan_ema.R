@@ -19,9 +19,10 @@ while(TRUE) {
   streamRow <- fromJSON(line)
   
 
-  historical <- getURL(paste0('http://localhost:8080/gemfire-api/v1/queries/adhoc?q=SELECT%20DISTINCT%20*%20FROM%20/Stocks%20s%20ORDER%20BY%20%22timestamp%22%20LIMIT%20100'))
+  historical <- getURL(paste0('http://localhost:8080/gemfire-api/v1/queries/adhoc?q=SELECT%20DISTINCT%20*%20FROM%20/Stocks%20s%20ORDER%20BY%20%22timestamp%22%20desc%20LIMIT%20100'))
 
   historicalSet <- fromJSON(historical)
+  historicalSet <- historicalSet[order(historicalSet$timestamp),]
 
   dataset <- subset(historicalSet, select = c("DaysHigh", "DaysLow", "LastTradePriceOnly")) 
   names(dataset) <- c("High","Low","Close")
@@ -71,12 +72,16 @@ while(TRUE) {
 
 
 
-  to_predict <- inputs[nrow(inputs),] # we'll predict based on the last value 
-  to_predict <- subset(to_predict, select = c(closeNorm, emaNorm))
+
+  normalized <- normalizeData(subset(inputs, select = c(ema, close)))
+  to_predict <- normalized[nrow(normalized),] # we'll predict based on the last value 
  
+
   load(file='/Users/fmelo/FinanceStream/mynet_jordan.RData')
   results <- predict(jordannet, to_predict) # should be an input without response column
-    
+
+  results <- denormalizeData(x=results, getNormParameters(normalized))    
+
   streamRow$predictedPeak <- results[1,1]
 
   #cat("\nForecasting for timestamp: ",streamRow$timestamp,"  value  ", streamRow$predictedPeak, "\n")

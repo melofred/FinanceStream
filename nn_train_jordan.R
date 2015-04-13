@@ -67,7 +67,7 @@ require("RSNNS")
 #  jordannet <- jordan(x=trainset,y=ema_lag, size=c(15), learnFuncParams=c(0.2), linOut=FALSE, maxit=10000)
 #  jordannet <- jordan(x=trainset,y=change, size=c(15), learnFuncParams=c(0.2), maxit=10000)
 
-   jordannet <- jordan(patterns$inputsTrain, patterns$targetsTrain, size = c(10), learnFuncParams = c(0.1), maxit = 100000, inputsTest = patterns$inputsTest, targetsTest = patterns$targetsTest, linOut = TRUE)
+   jordannet <- jordan(patterns$inputsTrain, patterns$targetsTrain, size = c(10), learnFuncParams = c(0.1), maxit = 10000, inputsTest = patterns$inputsTest, targetsTest = patterns$targetsTest, linOut = TRUE)
 
 
   write('Saving network....',stdout());

@@ -13,8 +13,11 @@ import javafx.stage.Stage;
 public class LineChartSample extends Application {
     @SuppressWarnings("unchecked")
     @Override public void start(Stage stage) {
+        final NumberAxis xAxis = new NumberAxis();
+        final NumberAxis yAxis = new NumberAxis(20,250,1);
+        
         final LineChart lineChart = new LineChart(
-                new NumberAxis(), new NumberAxis(),
+                xAxis, yAxis,
                 FXCollections.observableArrayList(
                         new XYChart.Series(
                                 "My portfolio",
@@ -25,11 +28,12 @@ public class LineChartSample extends Application {
                 )
         );
         lineChart.setCursor(Cursor.CROSSHAIR);
-
         lineChart.setTitle("Stock Monitoring, 2013");
+
 
         stage.setScene(new Scene(lineChart, 500, 400));
         stage.show();
+  
     }
 
     /** @return plotted y values for monotonically increasing integer x values, starting from x=1 */

@@ -24,6 +24,7 @@ public class StockListener<K,V> extends CacheListenerAdapter<K, V> implements De
             Double close = (double) instance.readField("close");
             Double prediction = (double)instance.readField("predictedPeak");;
 
+            
             if (FinanceUI.getInstance() != null) {
                 FinanceUI.getInstance().getStockDataQueue().add((Number) close);
                 FinanceUI.getInstance().getPredictionDataQueue().add((Number) prediction);

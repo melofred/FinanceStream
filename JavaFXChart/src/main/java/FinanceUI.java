@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class FinanceUI extends Application {
 
-    private static final int MAX_DATA_POINTS = 50;
+    private static final int MAX_DATA_POINTS = 500;
     private int xSeriesData = 0;
     private XYChart.Series stockPriceSeries;
     private XYChart.Series predictionSeries;
@@ -58,7 +58,8 @@ public class FinanceUI extends Application {
             .set("cache-xml-file", "client.xml")
             .create();
 
-    private NumberAxis xAxis;
+    static NumberAxis xAxis;
+    static NumberAxis yAxis;
 
     public static void main(String[] args) {
         stocksRegion = cache.getRegion(regionName);
@@ -79,8 +80,12 @@ public class FinanceUI extends Application {
         xAxis.setTickMarkVisible(true);
         xAxis.setMinorTickVisible(false);
 
-        NumberAxis yAxis = new NumberAxis();
-        yAxis.setAutoRanging(true);
+        yAxis = new NumberAxis();        
+        yAxis.setAutoRanging(false);
+        yAxis.setForceZeroInRange(false);
+        yAxis.setLowerBound(210);
+        yAxis.setUpperBound(225);
+        
         yAxis.setLabel("Stock Price ($)");
 
         //-- Chart
@@ -137,6 +142,7 @@ public class FinanceUI extends Application {
 //            series3.getData().add(new AreaChart.Data(xSeriesData++, dataQ3.remove()));
         }
         // remove points to keep us at no more than MAX_DATA_POINTS
+        
         if (stockPriceSeries.getData().size() > MAX_DATA_POINTS) {
             stockPriceSeries.getData().remove(0, stockPriceSeries.getData().size() - MAX_DATA_POINTS);
         }
@@ -144,8 +150,9 @@ public class FinanceUI extends Application {
             predictionSeries.getData().remove(0, predictionSeries.getData().size() - MAX_DATA_POINTS);
         }
 
-//        update
         xAxis.setLowerBound(xSeriesData - MAX_DATA_POINTS);
         xAxis.setUpperBound(xSeriesData - 1);
+           
+        
     }
 }

@@ -9,6 +9,7 @@ require("RSNNS")
   historical <- getURL(paste0('http://localhost:8080/gemfire-api/v1/queries/adhoc?q=SELECT%20DISTINCT%20*%20FROM%20/Stocks%20s%20ORDER%20BY%20%22timestamp%22%20LIMIT%20100000'))
 
   historicalSet <- fromJSON(historical)
+  historicalSet <-historicalSet[order(historicalSet$timestamp),]
 
   dataset <- subset(historicalSet, select = c("DaysHigh", "DaysLow", "LastTradePriceOnly")) 
   names(dataset) <- c("High","Low","Close")
@@ -39,14 +40,14 @@ require("RSNNS")
   
 
   # normalize
-  inputs$closeNorm=normalizeData(inputs$close)
-  inputs$emaNorm=normalizeData(inputs$ema)
-  inputs$ema_diff=normalizeData(inputs$ema_diff)
-  inputs$rsi=normalizeData(inputs$rsi)
-  inputs$sar=normalizeData(inputs$sar)
-#  inputs$smi=normalizeData(inputs$smi) 
-  inputs$high_diff=normalizeData(inputs$high_diff)
-  inputs$low_diff=normalizeData(inputs$low_diff)
+  inputs$closeNorm=normalizeData(inputs$close, type="0_1")
+  inputs$emaNorm=normalizeData(inputs$ema, type="0_1")
+  inputs$ema_diff=normalizeData(inputs$ema_diff, type="0_1")
+  inputs$rsi=normalizeData(inputs$rsi, type="0_1")
+  inputs$sar=normalizeData(inputs$sar, type="0_1")
+#  inputs$smi=normalizeData(inputs$smi, type="0_1") 
+  inputs$high_diff=normalizeData(inputs$high_diff, type="0_1")
+  inputs$low_diff=normalizeData(inputs$low_diff, type="0_1")
 
   #adds peaks and valleys
   inputs$peakvalley=0
@@ -57,17 +58,13 @@ require("RSNNS")
   
 
 
-  data_in <- subset(inputs, select = c(closeNorm, emaNorm))
-  data_out <- ema_lag
+  data_in <- normalizeData(subset(inputs, select = c(ema,close)))
+  data_out <- normalizeData(ema_lag)
 
   patterns <- splitForTrainingAndTest(data_in, data_out, ratio = 0.15)
   
 
-
-#  jordannet <- jordan(x=trainset,y=ema_lag, size=c(15), learnFuncParams=c(0.2), linOut=FALSE, maxit=10000)
-#  jordannet <- jordan(x=trainset,y=change, size=c(15), learnFuncParams=c(0.2), maxit=10000)
-
-   jordannet <- jordan(patterns$inputsTrain, patterns$targetsTrain, size = c(10), learnFuncParams = c(0.1), maxit = 100000, inputsTest = patterns$inputsTest, targetsTest = patterns$targetsTest, linOut = TRUE)
+   jordannet <- jordan(patterns$inputsTrain, patterns$targetsTrain, size = c(10), learnFuncParams = c(0.2), maxit = 10000, inputsTest = patterns$inputsTest, targetsTest = patterns$targetsTest, linOut = TRUE)
 
 
   write('Saving network....',stdout());

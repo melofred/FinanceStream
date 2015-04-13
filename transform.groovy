@@ -1,4 +1,4 @@
-print payload
+//print payload
 if (!payload.containsKey("timestamp")){
    payload.put("timestamp", System.nanoTime()) 
 }

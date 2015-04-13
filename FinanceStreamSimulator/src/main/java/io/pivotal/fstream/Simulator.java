@@ -9,8 +9,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
-@ComponentScan
-@Configuration
 public class Simulator implements CommandLineRunner {
 
 	@Value("${serverUrl}") 
@@ -35,7 +33,11 @@ public class Simulator implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		
-
+		List objects = restTemplate.getForObject("http://localhost:8080/gemfire-api/v1/queries/adhoc?q=SELECT%20DISTINCT%20*%20FROM%20/Stocks%20s%20ORDER%20BY%20%22timestamp%22%20desc%20LIMIT%20600", List.class);
+		logger.info("received number of objects "+ objects.size());
+		logger.info("index 0 is "+ objects.get(0));
+		
+		
 		logger.info("--------------------------------------");
 		logger.info(">>> URL: "+URL);
 		logger.info(">>> Number of messages: "+numberOfMessages);
@@ -62,7 +64,8 @@ public class Simulator implements CommandLineRunner {
 			
 		}		
 		
-		restTemplate.getForObject("http://localhost:8080/gemfire-api/v1/queries/adhoc?q=SELECT%20DISTINCT%20*%20FROM%20/Stocks%20s%20ORDER%20BY%20%22timestamp%22%20desc%20LIMIT%20200", List<StockPrice>, null);
+
+		
 		
 		logger.info("done");
 		

@@ -9,13 +9,10 @@ require("RSNNS")
 # Read from stdin - need to find a pattern to stop reading?
 
 f <- file("stdin")
-#f <- file("sample_data.out")
 open(f)
 while(TRUE) {
   line <- readLines(f,n=1)
-  #cat("\nUsing line: ",line, "\n")  
 
-  #write(line, stdout())
   streamRow <- fromJSON(line)
   
 
@@ -60,20 +57,8 @@ while(TRUE) {
   inputs <- inputs[-1:-35,]
   dataset <- dataset[-1:-35,]
 
-  # normalize
-  inputs$closeNorm=normalizeData(inputs$close)
-  inputs$emaNorm=normalizeData(inputs$ema)
-  inputs$ema_diff=normalizeData(inputs$ema_diff)
-  inputs$rsi=normalizeData(inputs$rsi)
-  inputs$sar=normalizeData(inputs$sar)
-  inputs$smi=normalizeData(inputs$smi)
-  inputs$high_diff=normalizeData(inputs$high_diff)
-  inputs$low_diff=normalizeData(inputs$low_diff)
 
-
-
-
-  normalized <- normalizeData(subset(inputs, select = c(ema, close)))
+  normalized <- normalizeData(subset(inputs, select = c(ema)))
   to_predict <- normalized[nrow(normalized),] # we'll predict based on the last value 
  
 

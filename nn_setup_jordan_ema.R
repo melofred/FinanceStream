@@ -39,16 +39,6 @@ require("RSNNS")
   change <- change[36:NROW(change)]
   
 
-  # normalize
-  inputs$closeNorm=normalizeData(inputs$close, type="0_1")
-  inputs$emaNorm=normalizeData(inputs$ema, type="0_1")
-  inputs$ema_diff=normalizeData(inputs$ema_diff, type="0_1")
-  inputs$rsi=normalizeData(inputs$rsi, type="0_1")
-  inputs$sar=normalizeData(inputs$sar, type="0_1")
-#  inputs$smi=normalizeData(inputs$smi, type="0_1") 
-  inputs$high_diff=normalizeData(inputs$high_diff, type="0_1")
-  inputs$low_diff=normalizeData(inputs$low_diff, type="0_1")
-
   #adds peaks and valleys
   inputs$peakvalley=0
   peaks <- findPeaks(dataset$Close, thresh=0.00015)
@@ -57,14 +47,13 @@ require("RSNNS")
   inputs$peakvalley[valleys-1]=1
   
 
-
-  data_in <- normalizeData(subset(inputs, select = c(ema,close)))
-  data_out <- normalizeData(ema_lag)
+  data_in <- subset(inputs, select = c(ema))
+  data_out <- ema_lag
 
   patterns <- splitForTrainingAndTest(data_in, data_out, ratio = 0.15)
-  
+  patterns <- normTrainingAndTestSet(patterns, dontNormTargets = TRUE, type = "norm")  
 
-   jordannet <- jordan(patterns$inputsTrain, patterns$targetsTrain, size = c(10), learnFuncParams = c(0.2), maxit = 100000, inputsTest = patterns$inputsTest, targetsTest = patterns$targetsTest, linOut = FALSE)
+   jordannet <- jordan(patterns$inputsTrain, patterns$targetsTrain, size = c(10), learnFuncParams = c(0.2), maxit = 20000, inputsTest = patterns$inputsTest, targetsTest = patterns$targetsTest, linOut = FALSE)
 
 
   write('Saving network....',stdout());

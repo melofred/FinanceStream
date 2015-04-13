@@ -40,16 +40,6 @@ while(TRUE) {
   change <- change[36:NROW(change)]
   
 
-  # normalize
-  inputs$closeNorm=normalizeData(inputs$close, type="0_1")
-  inputs$emaNorm=normalizeData(inputs$ema, type="0_1")
-  inputs$ema_diff=normalizeData(inputs$ema_diff, type="0_1")
-  inputs$rsi=normalizeData(inputs$rsi, type="0_1")
-  inputs$sar=normalizeData(inputs$sar, type="0_1")
-#  inputs$smi=normalizeData(inputs$smi, type="0_1") 
-  inputs$high_diff=normalizeData(inputs$high_diff, type="0_1")
-  inputs$low_diff=normalizeData(inputs$low_diff, type="0_1")
-
   #adds peaks and valleys
   inputs$peakvalley=0
   peaks <- findPeaks(dataset$Close, thresh=0.00015)
@@ -59,14 +49,17 @@ while(TRUE) {
   
 
 
-  data_in <- normalizeData(subset(inputs, select = c(ema,close)))
-  data_out <- normalizeData(ema_lag)
+  data_in <- subset(inputs, select = c(ema,close))
+  data_out <- ema_lag
 
   patterns <- splitForTrainingAndTest(data_in, data_out, ratio = 0.15)
+  patterns <- normTrainingAndTestSet(patterns, dontNormTargets = TRUE, type = "norm")
   
   load(file='/Users/fmelo/FinanceStream/mynet_jordan.RData')
+  
+  write('Starting training....\n',stdout());
 
-  jordannet <- train(jordannet, patterns$inputsTrain, patterns$targetsTrain, inputsTest = patterns$inputsTest, targetsTest = patterns$targetsTest, serializeTrainedObject = TRUE)
+  jordannet <- train(jordannet, patterns$inputsTrain, patterns$targetsTrain, inputsTest = patterns$inputsTest, targetsTest = patterns$targetsTest, serializeTrainedObject = FALSE)
 
   write('Saving network....',stdout());
 

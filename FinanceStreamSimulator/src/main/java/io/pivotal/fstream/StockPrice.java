@@ -22,6 +22,9 @@ public class StockPrice {
 	@JsonProperty("DaysLow")	
 	private double low;
 
+	@JsonProperty("timestamp")	
+	private long timestamp;
+
 	public String getSymbol() {
 		return symbol;
 	}
@@ -52,6 +55,14 @@ public class StockPrice {
 
 	public void setLow(double low) {
 		this.low = low;
+	}
+
+	public long getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
 	}
 	
 	

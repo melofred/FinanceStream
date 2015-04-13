@@ -61,6 +61,7 @@ public class Simulator2 implements CommandLineRunner {
 			price.setSymbol((String)map.get("symbol"));
 			price.setLow(new Double(map.get("DaysLow").toString()));
 			price.setHigh(new Double(map.get("DaysHigh").toString()));
+			price.setTimestamp((Long)map.get("timestamp"));
 			StockPrice response = restTemplate.postForObject(URL, price, StockPrice.class);
 		}
 		

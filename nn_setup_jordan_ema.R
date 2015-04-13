@@ -47,7 +47,7 @@ require("RSNNS")
   inputs$peakvalley[valleys-1]=1
   
 
-  data_in <- subset(inputs, select = c(ema))
+  data_in <- subset(inputs, select = c(close, ema, rsi))
   data_out <- ema_lag
 
   patterns <- splitForTrainingAndTest(data_in, data_out, ratio = 0.15)

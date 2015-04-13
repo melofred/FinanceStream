@@ -58,7 +58,7 @@ while(TRUE) {
   dataset <- dataset[-1:-35,]
 
 
-  normalized <- normalizeData(subset(inputs, select = c(ema)))
+  normalized <- normalizeData(subset(inputs, select = c(close, ema, rsi)))
   to_predict <- normalized[nrow(normalized),] # we'll predict based on the last value 
  
 
@@ -73,8 +73,8 @@ while(TRUE) {
  
 #  inputWithPrediction=streamRow[1,]
 
-  predicted_line <- data.frame(streamRow$timestamp, inputs$ema[nrow(inputs)], streamRow$predictedPeak);
-  names(predicted_line) <- c("timestamp","close","predictedPeak")
+  predicted_line <- data.frame(streamRow$timestamp, inputs$ema[nrow(inputs)], inputs$close[nrow(inputs)], streamRow$predictedPeak);
+  names(predicted_line) <- c("timestamp", "ema", "close","predictedPeak")
   predicted_line <- toJSON(predicted_line);
 
   cat (predicted_line)

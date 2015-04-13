@@ -24,23 +24,33 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class FinanceUI extends Application {
 
     private static final int MAX_DATA_POINTS = 200;
-    private int xSeriesData = 0;
+    private int xSeriesDataStock = 0;
+    private int xSeriesDataPrediction = 0;
     private XYChart.Series stockPriceSeries;
+    private XYChart.Series emaPriceSeries;
     private XYChart.Series predictionSeries;
     private ConcurrentLinkedQueue<Number> stockDataQueue = new ConcurrentLinkedQueue<Number>();
-    private ConcurrentLinkedQueue<Number> timeQueue = new ConcurrentLinkedQueue<Number>();
+    private ConcurrentLinkedQueue<Number> emaDataQueue = new ConcurrentLinkedQueue<Number>();
     private ConcurrentLinkedQueue<Number> predictionDataQueue = new ConcurrentLinkedQueue<Number>();
     private static FinanceUI instance;
-    private final static String regionName = "Predictions";
+    private final static String stocksRegionName = "Stocks";
+    private final static String predictionsRegionName = "Predictions";
     private static Region stocksRegion;
+    private static Region predictionsRegion;
 
-
+    static double minY = Double.MAX_VALUE;
+    static double maxY = Double.MIN_VALUE;
+    
     public ConcurrentLinkedQueue<Number> getPredictionDataQueue() {
         return predictionDataQueue;
     }
 
     public ConcurrentLinkedQueue<Number> getStockDataQueue() {
         return stockDataQueue;
+    }
+
+    public ConcurrentLinkedQueue<Number> getEmaDataQueue() {
+        return emaDataQueue;
     }
 
     public static FinanceUI getInstance() {
@@ -51,7 +61,7 @@ public class FinanceUI extends Application {
         return stocksRegion;
     }
 
-    private static final String fxTitle = "ApacheCon 2015 - SpringXD + Geode + R Example";
+    private static final String fxTitle = "ApacheCon 2015 - SpringXD + Geode + R Demo";
 
     private static ClientCache cache = new ClientCacheFactory()
             .set("name", "GemFireClient"+ LocalDateTime.now())
@@ -62,9 +72,11 @@ public class FinanceUI extends Application {
     static NumberAxis yAxis;
 
     public static void main(String[] args) {
-        stocksRegion = cache.getRegion(regionName);
+        stocksRegion = cache.getRegion(stocksRegionName);
         stocksRegion.registerInterest("ALL_KEYS");
 
+        predictionsRegion = cache.getRegion(predictionsRegionName);
+        predictionsRegion.registerInterest("ALL_KEYS");
         launch(args);
     }
 
@@ -83,8 +95,8 @@ public class FinanceUI extends Application {
         yAxis = new NumberAxis();        
         yAxis.setAutoRanging(false);
         yAxis.setForceZeroInRange(false);
-        yAxis.setLowerBound(218);
-        yAxis.setUpperBound(222);
+        //yAxis.setLowerBound(210.4);
+        //yAxis.setUpperBound(212);
         
         yAxis.setLabel("Stock Price ($)");
 
@@ -105,10 +117,14 @@ public class FinanceUI extends Application {
         //-- Chart Series
         stockPriceSeries = new XYChart.Series<Number, Number>();
         stockPriceSeries.setName("Last Close");
-        predictionSeries = new XYChart.Series<Number, Number>();
-        predictionSeries.setName("Prediction");
 
-        sc.getData().addAll(stockPriceSeries, predictionSeries);
+        emaPriceSeries = new XYChart.Series<Number, Number>();
+        emaPriceSeries.setName("Med Avg");
+
+        predictionSeries = new XYChart.Series<Number, Number>();
+        predictionSeries.setName("Predicted Med Avg.");
+
+        sc.getData().addAll(stockPriceSeries, emaPriceSeries, predictionSeries);
         sc.getStylesheets().add(new File("/Users/wmarkito/Pivotal/samples/JavaFXChart/src/main/resources/style.css").getAbsolutePath());
         sc.applyCss();
         primaryStage.setScene(new Scene(sc));
@@ -137,8 +153,13 @@ public class FinanceUI extends Application {
     private void addDataToSeries() {
         for (int i = 0; i < 50; i++) {
             if (stockDataQueue.isEmpty()) break;
-            stockPriceSeries.getData().add(new AreaChart.Data(xSeriesData++, stockDataQueue.remove()));
-            predictionSeries.getData().add(new AreaChart.Data(xSeriesData++, predictionDataQueue.remove()));
+            stockPriceSeries.getData().add(new AreaChart.Data(xSeriesDataStock++, stockDataQueue.remove()));
+                        
+            if (predictionDataQueue.isEmpty() || emaDataQueue.isEmpty()) break;
+            predictionSeries.getData().add(new AreaChart.Data(xSeriesDataPrediction, predictionDataQueue.remove()));
+            emaPriceSeries.getData().add(new AreaChart.Data(xSeriesDataPrediction, emaDataQueue.remove()));
+            xSeriesDataPrediction++;
+            
 //            series3.getData().add(new AreaChart.Data(xSeriesData++, dataQ3.remove()));
         }
         // remove points to keep us at no more than MAX_DATA_POINTS
@@ -149,9 +170,13 @@ public class FinanceUI extends Application {
         if (predictionSeries.getData().size() > MAX_DATA_POINTS) {
             predictionSeries.getData().remove(0, predictionSeries.getData().size() - MAX_DATA_POINTS);
         }
+        
+        if (emaPriceSeries.getData().size() > MAX_DATA_POINTS) {
+            emaPriceSeries.getData().remove(0, emaPriceSeries.getData().size() - MAX_DATA_POINTS);
+        }
 
-        xAxis.setLowerBound(xSeriesData - MAX_DATA_POINTS);
-        xAxis.setUpperBound(xSeriesData - 1);
+        xAxis.setLowerBound(xSeriesDataPrediction - MAX_DATA_POINTS);
+        xAxis.setUpperBound(xSeriesDataStock - 1);
            
         
     }

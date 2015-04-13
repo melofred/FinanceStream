@@ -8,7 +8,7 @@
         <locator host="localhost" port="10334" />
     </pool>
 
-    <region name="Predictions">
+    <region name="Stocks">
         <region-attributes refid="PROXY">
             <cache-listener>
                 <class-name>StockListener</class-name>
@@ -16,4 +16,11 @@
         </region-attributes>
     </region>
 
+    <region name="Predictions">
+        <region-attributes refid="PROXY">
+            <cache-listener>
+                <class-name>PredictionListener</class-name>
+            </cache-listener>
+        </region-attributes>
+    </region>
 </client-cache>

@@ -21,13 +21,22 @@ public class StockListener<K,V> extends CacheListenerAdapter<K, V> implements De
     
             PdxInstanceImpl instance = (PdxInstanceImpl) e.getNewValue();
             // reading fields from the event
-            Double close = (double) instance.readField("close");
-            Double prediction = (double)instance.readField("predictedPeak");;
+            Double close = (double) instance.readField("LastTradePriceOnly");
+            
+            if (close>FinanceUI.maxY) FinanceUI.maxY = close;
+            if (close<FinanceUI.minY) FinanceUI.minY = close;
+          
+            
+            //Double close = (double) instance.readField("ema");
+            //Double prediction = (double)instance.readField("predictedPeak");;
 
             
             if (FinanceUI.getInstance() != null) {
                 FinanceUI.getInstance().getStockDataQueue().add((Number) close);
-                FinanceUI.getInstance().getPredictionDataQueue().add((Number) prediction);
+                FinanceUI.yAxis.setUpperBound(FinanceUI.maxY);
+                FinanceUI.yAxis.setLowerBound(FinanceUI.minY);
+                
+              //  FinanceUI.getInstance().getPredictionDataQueue().add((Number) prediction);
             }
         } catch (Exception ex) {
             logger.severe("Problems parsing event for chart update:" + ex.getMessage());

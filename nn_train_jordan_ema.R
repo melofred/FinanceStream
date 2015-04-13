@@ -49,7 +49,7 @@ while(TRUE) {
   
 
 
-  data_in <- subset(inputs, select = c(ema,close))
+  data_in <- subset(inputs, select = c(close, ema, rsi))
   data_out <- ema_lag
 
   patterns <- splitForTrainingAndTest(data_in, data_out, ratio = 0.15)

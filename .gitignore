@@ -5,5 +5,6 @@ vf.gf.*
 locator1/
 server1/
 
-*.idea
+*/*.idea
 *.gradle
+JavaFXChart/.idea/

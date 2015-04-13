@@ -16,10 +16,10 @@ while(TRUE) {
   streamRow <- fromJSON(line)
   
 
-  historical <- getURL(paste0('http://localhost:8080/gemfire-api/v1/queries/adhoc?q=SELECT%20DISTINCT%20*%20FROM%20/Stocks%20s%20ORDER%20BY%20%22timestamp%22%20desc%20LIMIT%20100'))
+  historical <- getURL(paste0('http://localhost:8080/gemfire-api/v1/queries/adhoc?q=SELECT%20DISTINCT%20*%20FROM%20/Stocks%20s%20ORDER%20BY%20entryTimestamp%20desc%20LIMIT%20100'))
 
   historicalSet <- fromJSON(historical)
-  historicalSet <- historicalSet[order(historicalSet$timestamp),]
+  historicalSet <- historicalSet[order(historicalSet$entryTimestamp),]
 
   dataset <- subset(historicalSet, select = c("DaysHigh", "DaysLow", "LastTradePriceOnly")) 
   names(dataset) <- c("High","Low","Close")
@@ -69,12 +69,11 @@ while(TRUE) {
 
   streamRow$predictedPeak <- results[1,1]
 
-  #cat("\nForecasting for timestamp: ",streamRow$timestamp,"  value  ", streamRow$predictedPeak, "\n")
  
 #  inputWithPrediction=streamRow[1,]
 
-  predicted_line <- data.frame(streamRow$timestamp, inputs$ema[nrow(inputs)], inputs$close[nrow(inputs)], streamRow$predictedPeak);
-  names(predicted_line) <- c("timestamp", "ema", "close","predictedPeak")
+  predicted_line <- data.frame(streamRow$entryTimestamp, inputs$ema[nrow(inputs)], inputs$close[nrow(inputs)], streamRow$predictedPeak);
+  names(predicted_line) <- c("entryTimestamp", "ema", "close","predictedPeak")
   predicted_line <- toJSON(predicted_line);
 
   cat (predicted_line)

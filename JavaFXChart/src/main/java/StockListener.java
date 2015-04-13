@@ -15,11 +15,21 @@ public class StockListener<K,V> extends CacheListenerAdapter<K, V> implements De
     Logger logger = Logger.getAnonymousLogger();
     
     
+    
+    
     @Override
-    public void afterCreate(EntryEvent<K, V> e) {
+	public void afterUpdate(EntryEvent<K, V> event) {
+    	addToQueue((PdxInstanceImpl) event.getNewValue());
+    }
+    
+    @Override
+	public void afterCreate(EntryEvent<K, V> event) {
+    	addToQueue((PdxInstanceImpl) event.getNewValue());
+    }
+    
+	public void addToQueue(PdxInstanceImpl instance) {
         try {
     
-            PdxInstanceImpl instance = (PdxInstanceImpl) e.getNewValue();
             // reading fields from the event
             Double close = (double) instance.readField("LastTradePriceOnly");
             
@@ -42,7 +52,7 @@ public class StockListener<K,V> extends CacheListenerAdapter<K, V> implements De
             logger.severe("Problems parsing event for chart update:" + ex.getMessage());
         }
 
-        logger.fine(String.format("Received afterCreate event for entry: %s, %s", e.getKey(), e.getNewValue().getClass()));
+        logger.fine(String.format("Received afterCreate event for entry:  %s", instance.toString()));
     }
 
     @Override

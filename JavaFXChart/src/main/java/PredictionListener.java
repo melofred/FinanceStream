@@ -16,14 +16,22 @@ public class PredictionListener<K,V> extends CacheListenerAdapter<K, V> implemen
 	
     Logger logger = Logger.getAnonymousLogger();
     
+    @Override
+	public void afterUpdate(EntryEvent<K, V> event) {
+    	addToQueue((PdxInstanceImpl) event.getNewValue());
+    }
     
     @Override
-    public void afterCreate(EntryEvent<K, V> e) {
+	public void afterCreate(EntryEvent<K, V> event) {
+    	addToQueue((PdxInstanceImpl) event.getNewValue());
+    }
+    
+    
+    public void addToQueue(PdxInstanceImpl instance) {
         try {
     
-            PdxInstanceImpl instance = (PdxInstanceImpl) e.getNewValue();
-            Double prediction = (double)instance.readField("predictedPeak");;
-            Double ema = (double)instance.readField("ema");;
+            Double prediction = (double)instance.readField("predictedPeak");
+            Double ema = (double)instance.readField("ema");
 
             if (prediction>FinanceUI.maxY) FinanceUI.maxY = prediction;
             if (prediction<FinanceUI.minY) FinanceUI.minY = prediction;
@@ -42,7 +50,7 @@ public class PredictionListener<K,V> extends CacheListenerAdapter<K, V> implemen
             logger.severe("Problems parsing event for chart update:" + ex.getMessage());
         }
 
-        logger.fine(String.format("Received afterCreate event for entry: %s, %s", e.getKey(), e.getNewValue().getClass()));
+        logger.fine(String.format("Received afterCreate event for entry:  %s", instance.toString()));
     }
 
     @Override

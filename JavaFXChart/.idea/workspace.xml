@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5ecbf557-0fc3-4841-b073-ed9b2cd6444d" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/geode-logo.png" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/style.css" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/FinanceUI.java" afterPath="$PROJECT_DIR$/src/main/java/FinanceUI.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/style.css" afterPath="$PROJECT_DIR$/src/main/resources/style.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="JavaFXChart.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -51,8 +47,8 @@
           <file leaf-file-name="style.css" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/main/resources/style.css">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.09070295" vertical-offset="0" max-vertical-offset="882">
-                  <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+                <state vertical-scroll-proportion="0.3628118" vertical-offset="0" max-vertical-offset="882">
+                  <caret line="20" column="27" selection-start-line="20" selection-start-column="27" selection-end-line="20" selection-end-column="27" />
                   <folding />
                 </state>
               </provider>
@@ -75,8 +71,8 @@
           <file leaf-file-name="FinanceUI.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/main/java/FinanceUI.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="1.3911525" vertical-offset="901" max-vertical-offset="2864">
-                  <caret line="141" column="0" selection-start-line="141" selection-start-column="0" selection-end-line="141" selection-end-column="0" />
+                <state vertical-scroll-proportion="0.44121072" vertical-offset="901" max-vertical-offset="2864">
+                  <caret line="90" column="29" selection-start-line="90" selection-start-column="29" selection-end-line="90" selection-end-column="29" />
                   <folding>
                     <element signature="n#!!doc" expanded="true" />
                     <element signature="imports" expanded="true" />
@@ -448,8 +444,8 @@
         <option value="$PROJECT_DIR$/src/main/java/LineChartSample.java" />
         <option value="$PROJECT_DIR$/src/main/java/StockListener.java" />
         <option value="$PROJECT_DIR$/src/main/java/style.css" />
-        <option value="$PROJECT_DIR$/src/main/resources/style.css" />
         <option value="$PROJECT_DIR$/src/main/java/FinanceUI.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/style.css" />
       </list>
     </option>
   </component>
@@ -1199,22 +1195,22 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/style.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.09070295" vertical-offset="0" max-vertical-offset="882">
-          <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/FinanceUI.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.3911525" vertical-offset="901" max-vertical-offset="2864">
-          <caret line="141" column="0" selection-start-line="141" selection-start-column="0" selection-end-line="141" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="1520" max-vertical-offset="2864">
+          <caret line="105" column="114" selection-start-line="105" selection-start-column="114" selection-end-line="105" selection-end-column="114" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/style.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3628118" vertical-offset="0" max-vertical-offset="882">
+          <caret line="20" column="27" selection-start-line="20" selection-start-column="27" selection-end-line="20" selection-end-column="27" />
+          <folding />
         </state>
       </provider>
     </entry>

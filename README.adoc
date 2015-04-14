@@ -132,7 +132,7 @@ Deploy the simulator:
 java -jar FinanceStreamSimulator/build/libs/FinanceStreamSimulator.jar --numberOfMessages=1000
 ----
 
-* At each a few seconds, it's time to re-train the network using the script __nn_train_jordan_ema.R__
+* Every few seconds the network is re-trained using the script __nn_train_jordan_ema.R__
 
 That can be done through a stream in XD or even as a batch. For simplicity, let's use streams:
 
@@ -140,6 +140,12 @@ That can be done through a stream in XD or even as a batch. For simplicity, let'
 xd:>stream create trainstream --definition "trigger --fixedDelay=10 | shell --command='Rscript nn_train_jordan_ema.R' | log " --deploy
 ----
 
-## UI using D3
+## UI using JavaFX
 
-Open ui/index.html and check the graphs being updated...
+The UI for the application uses JavaFX and acting as Geode client can subscribe to event notifications on the regions and receive updates as soon as data is updated on the servers, leveraging a PUSH instead of PULL strategy, which is much more efficient.
+
+Under JavaFXChart directory you can build/execute the client:
+
+----
+./gradle runfx
+----

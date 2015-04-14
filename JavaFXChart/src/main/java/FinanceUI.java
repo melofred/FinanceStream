@@ -16,7 +16,6 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.time.LocalDateTime;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -124,9 +123,11 @@ public class FinanceUI extends Application {
         predictionSeries = new XYChart.Series<Number, Number>();
         predictionSeries.setName("Predicted Med Avg.");
 
+
         sc.getData().addAll(stockPriceSeries, emaPriceSeries, predictionSeries);
-        sc.getStylesheets().add(new File("/Users/wmarkito/Pivotal/samples/JavaFXChart/src/main/resources/style.css").getAbsolutePath());
+        sc.getStylesheets().add("style.css");
         sc.applyCss();
+
         primaryStage.setScene(new Scene(sc));
     }
 
@@ -134,6 +135,8 @@ public class FinanceUI extends Application {
     public void start(Stage stage) {
         stage.setTitle(fxTitle);
         init(stage);
+//        stage.setMinHeight(600);
+        stage.setMinWidth(850);
         stage.show();
 
         //-- Prepare Timeline

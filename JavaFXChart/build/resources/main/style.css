@@ -14,12 +14,11 @@
 }
 .chart-legend {
    -fx-background-color:  transparent;
-   -fx-padding: 5px;
-   -fx-position: right bottom;
+   -fx-padding: 3px;
 }
 
 .chart-legend-item-symbol{
-   -fx-background-radius: 0;
+   -fx-background-radius: 5;
 }
 
 .chart-legend-item{

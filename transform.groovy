@@ -8,9 +8,6 @@ if (!payload.containsKey("entryTimestamp")){
 }
 companyName=payload.get("Name")
 if (companyName!=null && companyName.indexOf(",")!=-1) payload.put ("Name",companyName.replaceAll(",",""))
-//payload.put("LastTradePriceOnly", (double) Math.round(payload.get("LastTradePriceOnly") * 100) / 100)
-//payload.put("DaysHigh", (double) Math.round(payload.get("DaysHigh") * 100) / 100)
-//payload.put("DaysLow", (double) Math.round(payload.get("DaysLow") * 100) / 100)
 
 
 return payload

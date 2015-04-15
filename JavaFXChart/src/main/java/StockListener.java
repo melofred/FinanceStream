@@ -31,7 +31,7 @@ public class StockListener<K,V> extends CacheListenerAdapter<K, V> implements De
         try {
     
             // reading fields from the event
-            Double close = (double) instance.readField("LastTradePriceOnly");
+            Double close = Double.parseDouble(instance.readField("LastTradePriceOnly").toString());
             
             if (close>FinanceUI.maxY) FinanceUI.maxY = close;
             if (close<FinanceUI.minY) FinanceUI.minY = close;

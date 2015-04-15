@@ -74,7 +74,7 @@ while(TRUE) {
   to_predict <- inputs[nrow(inputs),] # we'll predict based on the last value 
   to_predict <- subset(to_predict, select = c(closeNorm, emaNorm, rsi))
  
-  load(file='/Users/fmelo/FinanceStream/mynet_jordan.RData')
+  load(file='mynet_jordan.RData')
   results <- predict(jordannet, to_predict) # should be an input without response column
     
   streamRow$predictedPeak <- results[1,1]

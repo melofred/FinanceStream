@@ -2,8 +2,11 @@
 logs/**/*.*
 vf.gf.*
 **/build/**/*.*
+**/bin/**/*.*
 locator1/
 server1/
 
-*.idea
-*.gradle
+.idea/
+.gradle/
+.class
+build/

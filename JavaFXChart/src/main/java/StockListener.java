@@ -1,6 +1,5 @@
 import com.gemstone.gemfire.cache.Declarable;
 import com.gemstone.gemfire.cache.EntryEvent;
-import com.gemstone.gemfire.cache.Region;
 import com.gemstone.gemfire.cache.util.CacheListenerAdapter;
 import com.gemstone.gemfire.pdx.internal.PdxInstanceImpl;
 
@@ -33,6 +32,7 @@ public class StockListener<K,V> extends CacheListenerAdapter<K, V> implements De
             // reading fields from the event
             Double close = Double.parseDouble(instance.readField("LastTradePriceOnly").toString());
             
+
             if (close>FinanceUI.maxY) FinanceUI.maxY = close;
             if (close<FinanceUI.minY) FinanceUI.minY = close;
           

@@ -1,4 +1,3 @@
-//print payload
 if (!payload.containsKey("entryTimestamp")){
    if (payload.containsKey("timestamp")){
       payload.put("entryTimestamp", payload.get("timestamp"))

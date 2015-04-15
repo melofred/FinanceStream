@@ -58,7 +58,7 @@ require("RSNNS")
 
   write('Saving network....',stdout());
 
-  f <- file('mynet_jordan.RData')
+  f <- file('/Users/fmelo/FinanceStream/mynet_jordan.RData')
   save(jordannet, file=f);
   flush(f)
   close(f)

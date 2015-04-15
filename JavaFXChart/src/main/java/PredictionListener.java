@@ -30,7 +30,7 @@ public class PredictionListener<K,V> extends CacheListenerAdapter<K, V> implemen
     public void addToQueue(PdxInstanceImpl instance) {
         try {
     
-            Double prediction = (double)instance.readField("predictedPeak");
+        	Double prediction = (double)instance.readField("predictedPeak");
             Double ema = (double)instance.readField("ema");
 
             if (prediction>FinanceUI.maxY) FinanceUI.maxY = prediction;

@@ -35,7 +35,7 @@ public class SinSimulator implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		
-		List objects = restTemplate.getForObject("http://localhost:8080/gemfire-api/v1/queries/adhoc?q=SELECT%20DISTINCT%20*%20FROM%20/Stocks%20s%20ORDER%20BY%20%22timestamp%22%20desc%20LIMIT%20600", List.class);
+		List objects = restTemplate.getForObject("http://localhost:8080/gemfire-api/v1/queries/adhoc?q=SELECT%20DISTINCT%20*%20FROM%20/Stocks%20s%20ORDER%20BY%20%22entryTimestamp%22%20LIMIT%20600", List.class);
 		logger.info("received number of objects "+ objects.size());
 		logger.info("index 0 is "+ objects.get(0));
 		

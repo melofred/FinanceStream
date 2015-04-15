@@ -16,7 +16,7 @@ while(TRUE) {
   streamRow <- fromJSON(line)
   
 
-  historical <- getURL(paste0('http://localhost:8080/gemfire-api/v1/queries/adhoc?q=SELECT%20DISTINCT%20*%20FROM%20/Stocks%20s%20ORDER%20BY%20entryTimestamp%20desc%20LIMIT%20100'))
+  historical <- getURL(paste0('http://localhost:8080/gemfire-api/v1/queries/adhoc?q=SELECT%20DISTINCT%20*%20FROM%20/Stocks%20s%20ORDER%20BY%20entryTimestam%20desc%20LIMIT%20100'))
 
   historicalSet <- fromJSON(historical)
   historicalSet <- historicalSet[order(historicalSet$entryTimestamp),]
@@ -62,7 +62,7 @@ while(TRUE) {
   to_predict <- normalized[nrow(normalized),] # we'll predict based on the last value 
  
 
-  load(file='mynet_jordan.RData')
+  load(file='/Users/fmelo/FinanceStream/mynet_jordan.RData')
   results <- predict(jordannet, to_predict) # should be an input without response column
 
   results <- denormalizeData(x=results, getNormParameters(normalized))    

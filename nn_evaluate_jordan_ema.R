@@ -62,7 +62,7 @@ while(TRUE) {
   to_predict <- normalized[nrow(normalized),] # we'll predict based on the last value 
  
 
-  load(file='/Users/fmelo/FinanceStream/mynet_jordan.RData')
+  load(file='mynet_jordan.RData')
   results <- predict(jordannet, to_predict) # should be an input without response column
 
   results <- denormalizeData(x=results, getNormParameters(normalized))    

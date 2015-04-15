@@ -53,7 +53,7 @@ public class ReplaySimulator implements CommandLineRunner {
 		double low = basePrice - scale;
 		double high = basePrice + scale;
 
-		List objects = restTemplate.getForObject(geodeURL+"/gemfire-api/v1/queries/adhoc?q=SELECT%20DISTINCT%20*%20FROM%20/Stocks%20s%20ORDER%20BY%20%22timestamp%22%20desc%20LIMIT%20"+numberOfMessages, List.class);
+		List objects = restTemplate.getForObject(geodeURL+"/gemfire-api/v1/queries/adhoc?q=SELECT%20DISTINCT%20*%20FROM%20/Stocks%20s%20ORDER%20BY%20%22entryTimestamp%22%20desc%20LIMIT%20"+numberOfMessages, List.class);
 
 		logger.info(">>> Posting "+objects.size()+" messages ranging from "+low+" to "+high+" ...");
 

@@ -47,18 +47,18 @@ require("RSNNS")
   inputs$peakvalley[valleys-1]=1
   
 
-  data_in <- subset(inputs, select = c(close, ema, rsi))
+  data_in <- subset(inputs, select = c(close, ema))
   data_out <- ema_lag
 
   patterns <- splitForTrainingAndTest(data_in, data_out, ratio = 0.15)
-  patterns <- normTrainingAndTestSet(patterns, dontNormTargets = TRUE, type = "norm")  
+  patterns <- normTrainingAndTestSet(patterns, dontNormTargets = FALSE, type = "norm")  
 
    jordannet <- jordan(patterns$inputsTrain, patterns$targetsTrain, size = c(10), learnFuncParams = c(0.2), maxit = 20000, inputsTest = patterns$inputsTest, targetsTest = patterns$targetsTest, linOut = FALSE)
 
 
   write('Saving network....',stdout());
 
-  f <- file('/Users/fmelo/FinanceStream/mynet_jordan.RData')
+  f <- file('mynet_jordan.RData')
   save(jordannet, file=f);
   flush(f)
   close(f)

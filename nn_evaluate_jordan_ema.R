@@ -58,11 +58,11 @@ while(TRUE) {
   dataset <- dataset[-1:-35,]
 
 
-  normalized <- normalizeData(subset(inputs, select = c(close, ema, rsi)))
+  normalized <- normalizeData(subset(inputs, select = c(close, ema)))
   to_predict <- normalized[nrow(normalized),] # we'll predict based on the last value 
  
 
-  load(file='/Users/fmelo/FinanceStream/mynet_jordan.RData')
+  load(file='mynet_jordan.RData')
   results <- predict(jordannet, to_predict) # should be an input without response column
 
   results <- denormalizeData(x=results, getNormParameters(normalized))    

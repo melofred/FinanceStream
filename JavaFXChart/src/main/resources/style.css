@@ -25,3 +25,4 @@
     -fx-text-fill: #191970;
 }
 
+.default-color2.chart-series-line { -fx-stroke-dash-array: 0.1 5.0; }

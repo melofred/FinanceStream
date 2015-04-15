@@ -110,7 +110,7 @@ Created and deployed new stream 'process_sink'
 xd:>stream create http_source --definition "http --port=9000 | splitter --expression=#jsonPath(payload,'$') > queue:stocks" --deploy
 Created and deployed new stream 'http_source'
 
-xd:>stream create yahoo_finance_source --definition "trigger --fixedDelay=1 | http-client --url='''https://query.yahooapis.com/v1/public/yql?q=select * from yahoo.finance.quote where symbol in (\"MSFT\")&format=json&env=store://datatables.org/alltableswithkeys''' --httpMethod=GET | splitter --expression=#jsonPath(payload,'$.query.results.quote')  > queue:stocks" --deploy
+xd:>stream create yahoo_finance_source --definition "trigger --fixedDelay=1 | http-client --url='''https://query.yahooapis.com/v1/public/yql?q=select * from yahoo.finance.quote where symbol in (\"TSLA\")&format=json&env=store://datatables.org/alltableswithkeys''' --httpMethod=GET | splitter --expression=#jsonPath(payload,'$.query.results.quote')  > queue:stocks" --deploy
 Created and deployed new stream 'yahoo_finance_source'
 ----
 

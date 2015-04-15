@@ -55,7 +55,7 @@ while(TRUE) {
   patterns <- splitForTrainingAndTest(data_in, data_out, ratio = 0.15)
   patterns <- normTrainingAndTestSet(patterns, dontNormTargets = TRUE, type = "norm")
   
-  load(file='/Users/fmelo/FinanceStream/mynet_jordan.RData')
+  load(file='mynet_jordan.RData')
   
   write('Starting training....\n',stdout());
 

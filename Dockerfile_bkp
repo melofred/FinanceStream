@@ -1,0 +1,46 @@
+FROM    centos:centos6
+
+RUN	yum install -y wget which tar unzip nc openssh-server openssh-clients
+
+RUN	yum install -y java-1.8.0-openjdk.x86_64
+RUN	wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" \
+"http://download.oracle.com/otn-pub/java/jdk/8u25-b17/jre-8u25-linux-x64.tar.gz"
+
+RUN 	wget http://repo.spring.io/release/org/springframework/xd/spring-xd/1.1.1.RELEASE/spring-xd-1.1.1.RELEASE-dist.zip
+RUN 	unzip spring-xd-1.1.1.RELEASE-dist.zip
+RUN 	rm /spring-xd-1.1.1.RELEASE-dist.zip
+
+ENV 	XD_HOME $HOME/spring-xd-1.1.1.RELEASE
+
+ENV	PATH $PATH:$XD_HOME/xd/bin:$XD_HOME/shell/bin
+
+RUN	echo PATH=$PATH
+
+RUN	chkconfig sshd on
+RUN	service sshd start
+
+# Bundle source
+COPY 	. .
+
+RUN	rpm -ivh pivotal-gemfire-8.1.0-50625.el7.noarch.rpm
+
+RUN	echo `which java`
+
+RUN 	gfsh run --file=setup.gfsh
+
+EXPOSE	22	
+EXPOSE  8080    
+EXPOSE	10334  	
+EXPOSE	40404	
+EXPOSE	1099	
+EXPOSE	7575
+
+
+EXPOSE	9393
+RUN	./startXD.sh
+
+RUN	xd-shell --cmdfile stream-create.xd
+
+RUN	cd FinanceStreamSimulator; ./gradlew run
+RUN	cd JavaFXChart; ./gradlew run
+

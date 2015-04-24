@@ -5,7 +5,7 @@ vf.gf.*
 **/bin/**/*.*
 locator1/
 server1/
-
+*.rpm
 .idea/
 .gradle/
 .class

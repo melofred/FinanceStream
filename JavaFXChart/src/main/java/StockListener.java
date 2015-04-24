@@ -37,9 +37,6 @@ public class StockListener<K,V> extends CacheListenerAdapter<K, V> implements De
             if (close<FinanceUI.minY) FinanceUI.minY = close;
           
             
-            //Double close = (double) instance.readField("ema");
-            //Double prediction = (double)instance.readField("predictedPeak");;
-
             
             if (FinanceUI.getInstance() != null) {
                 FinanceUI.getInstance().getStockDataQueue().add((Number) close);

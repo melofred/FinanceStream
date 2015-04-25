@@ -7,7 +7,7 @@ require("RSNNS")
 
 while(TRUE) {
 
-  historical <- getURL(paste0('http://localhost:8080/gemfire-api/v1/queries/adhoc?q=SELECT%20DISTINCT%20*%20FROM%20/Stocks%20s%20ORDER%20BY%20entryTimestamp%20desc%20LIMIT%20200'))
+  historical <- getURL(paste0('http://geode-server:8080/gemfire-api/v1/queries/adhoc?q=SELECT%20DISTINCT%20*%20FROM%20/Stocks%20s%20ORDER%20BY%20entryTimestamp%20desc%20LIMIT%20200'))
 
   historicalSet <- fromJSON(historical)
   historicalSet <-historicalSet[order(historicalSet$entryTimestamp),]
@@ -63,7 +63,7 @@ while(TRUE) {
 
   write('Saving network....',stdout());
 
-  f <- file('mynet_jordan.RData')
+  f <- file('prediction/mynet_jordan.RData')
   save(jordannet, file=f);
   flush(f)
   close(f)

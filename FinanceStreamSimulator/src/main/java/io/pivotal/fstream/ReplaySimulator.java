@@ -48,6 +48,7 @@ public class ReplaySimulator implements CommandLineRunner {
 		logger.info(">>> Endpoint URL: "+URL);
 		logger.info(">>> Number of messages: "+numberOfMessages);
 		logger.info(">>> Symbol: "+symbol);
+		logger.info(">>> Delay: "+delay+"ms");
 		logger.info("--------------------------------------");
 		
 		double low = basePrice - scale;

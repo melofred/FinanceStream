@@ -24,12 +24,27 @@ $ docker build --force-rm=true -t fredmelo/financestreamdemo-streaming -f Docker
 
 ### Run the containers
 
-- Geode / GemFire
+- Geode / GemFire locator
 
 [source,bash]
 ----
-$ docker run -d -p 40404:40404 -p 10334:10334 -p 8080:8080 --name geode-server fredmelo/financestreamdemo-geode sh data/startGF.sh
+$ docker run -d -p 10334:10334 -p 7575:7575 -p 1099:1099 --name geode-locator fredmelo/financestreamdemo-geode sh data/startLocator.sh
 ----
+
+- Geode / GemFire server
+
+[source,bash]
+----
+$ docker run --name geode-server -d -p 40404:40404 -p 8080:8080 --link geode-locator:geode-locator fredmelo/financestreamdemo-geode sh data/startServer.sh
+----
+
+- Geode / GemFire setup(create regions, populate with data)
+
+[source,bash]
+----
+$ docker run -t -i --link geode-locator:geode-locator --link geode-server:geode-server fredmelo/financestreamdemo-geode sh data/setup.sh
+----
+
 
 - XD Server + R 
 

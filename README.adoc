@@ -1,5 +1,7 @@
 # Finance Stream app setup
 
+* For docker instructions, follow link:Readme-docker.adoc[this link]
+
 ##  Pre-requisites:
 - GemFire 8.+ installed
 - Spring XD 1.1+ installed

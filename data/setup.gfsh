@@ -1,9 +1,6 @@
 # GemFire setup
-start locator --name=locator1 --hostname-for-clients=geode-server --J=-Dgemfire.http-service-port=7575
 
-connect --locator=localhost[10334]
-
-start server --name=server1 --hostname-for-clients=geode-server --J=-Dgemfire.start-dev-rest-api=true --J=-Dgemfire.http-service-port=8080
+connect --locator=geode-locator[10334]
 
 create region --name=/Stocks --type=REPLICATE
 

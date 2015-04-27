@@ -99,7 +99,7 @@ $ docker run -d -P  --name simulator --link xd-server:xd-server --link geode-ser
 
 ### Suggested demo setup:
 
-- Geode (locator + 1 server) running as a docker container
+- Geode (locator + 1+ servers) running as a docker container
 - XD Server running as a docker container
 - XD Shell / Stream creation can be run as either a docker container or directly from your machine
 - Simulator can be run as either a docker container or directly from your machine

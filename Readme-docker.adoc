@@ -1,0 +1,107 @@
+# Finance Stream setup using Docker containers
+
+##  Pre-requisites:
+- Docker installed (for MacOS, use http://boot2docker.io/)
+
+### Setup
+- MacOS users: launch boot2docker shell. All docker commands should be executed in that shell.
+
+### Build the containers
+
+- Geode / GemFire
+
+[source,bash]
+----
+$ docker build --force-rm=true -t fredmelo/financestreamdemo-geode -f Dockerfile-geode . 
+----
+
+ - Streaming (XD + R)
+ 
+[source,bash]
+----
+$ docker build --force-rm=true -t fredmelo/financestreamdemo-streaming -f Dockerfile-streaming .
+----
+
+### Run the containers
+
+- Geode / GemFire locator
+
+[source,bash]
+----
+$ docker run -d -p 10334:10334 -p 7575:7575 -p 1099:1099 --name geode-locator fredmelo/financestreamdemo-geode sh data/startLocator.sh
+----
+
+- Geode / GemFire server
+
+[source,bash]
+----
+$ docker run --name geode-server -d -p 40404:40404 -p 8080:8080 --link geode-locator:geode-locator fredmelo/financestreamdemo-geode sh data/startServer.sh
+----
+
+- Geode / GemFire setup(create regions, populate with data)
+
+[source,bash]
+----
+$ docker run -t -i --link geode-locator:geode-locator --link geode-server:geode-server fredmelo/financestreamdemo-geode sh data/setup.sh
+----
+
+
+- XD Server + R 
+
+[source,bash]
+----
+$ docker run -d -p 9393:9393 --name xd-server --link geode-server:geode-server fredmelo/financestreamdemo-streaming sh streaming/startXD.sh
+----
+
+- XD Shell / stream setup
+
+[source,bash]
+----
+$ docker run  --link xd-server:xd-server --link geode-server:geode-server fredmelo/financestreamdemo-streaming sh streaming/startStreaming.sh
+----
+
+### Additional containers
+
+ - Run GFSH client (if necessary for troubleshooting and demo'ing)
+ 
+[source,bash]
+----
+$ docker run -t -i --link geode-server:geode-server fredmelo/financestreamdemo-geode gfsh
+----
+ 
+ - Build Simulator container
+ 
+[source,bash]
+----
+$ docker build --force-rm=true -t fredmelo/financestreamdemo-simulator -f Dockerfile-simulator .
+----
+ 
+ - Run Simulator (1000 messages, 300ms delay between messages)
+ 
+[source,bash]
+----
+$ docker run -d -P  --name simulator --link xd-server:xd-server --link geode-server:geode-server fredmelo/financestreamdemo-simulator ./gradlew run
+----
+
+### Useful info
+
+- MacOS Users: in boot2docker, you can get the Linux VM IP using boot2docker ip
+
+----
+ bash-3.2$ boot2docker ip
+ 192.168.59.103
+----
+
+- Each component (Geode server, Streaming server, XD Shell, Simulator) can be run independently using docker or on your own laptop.
+- For accessing the components running inside each container, the following ports were exposed to the host machine (or boot2docker vm):
+* Geode: 10334, 40404 and 8080
+* XD Server: 9393
+
+### Suggested demo setup:
+
+- Geode (locator + 1 or more servers) running as a docker container
+- XD Server running as a docker container
+- XD Shell / Stream creation can be run as either a docker container or directly from your machine
+- Simulator can be run as either a docker container or directly from your machine
+- GUI should be run in your local machine 
+

@@ -10,3 +10,4 @@ server1/
 .gradle/
 .class
 build/
+.Rapp.history
